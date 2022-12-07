@@ -38,7 +38,6 @@ int main(void) {
 	struct Dir root = Dir(nullptr, "/");
 	struct Dir* cur_dir;
 
-	// Ignore first line to cd into /
 	while(getline(cin, line)) {
 		if(line[0] == '$') { // Command
 
