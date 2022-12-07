@@ -8,15 +8,15 @@ using namespace std;
 
 struct Dir {
 	vector<struct Dir*> sub_dirs;
-	struct Dir* parent_dir;
+	struct Dir* const parent_dir;
+	const string name;
 	uint32_t size;
-	string name;
 
-	Dir(struct Dir* _parent_dir, string _name) : parent_dir(_parent_dir), size(0), name(_name) {}
+	Dir(struct Dir* const _parent_dir, const string _name) : sub_dirs(), parent_dir(_parent_dir), name(_name), size(0) {}
 };
 
-static void dfs_update(struct Dir* dir, uint32_t& sum, const uint32_t max_size) {
-	for(struct Dir* sub_dir : dir->sub_dirs)
+static void dfs_update(struct Dir* const dir, uint32_t& sum, const uint32_t max_size) {
+	for(struct Dir* const sub_dir : dir->sub_dirs)
 		dfs_update(sub_dir, sum, max_size);
 
 	if(dir->parent_dir != nullptr)
@@ -42,9 +42,9 @@ int main(void) {
 					cur_dir = &root;
 				else {
 					const string new_dir_name = line.substr(5);
-					for(struct Dir* sub_dir : cur_dir->sub_dirs)
+					for(const struct Dir* const sub_dir : cur_dir->sub_dirs)
 						if(sub_dir->name == new_dir_name) {
-							cur_dir = sub_dir;
+							cur_dir = const_cast<struct Dir*>(sub_dir);
 							goto repeat;
 						}
 					exit(EXIT_FAILURE);

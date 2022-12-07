@@ -8,23 +8,23 @@ using namespace std;
 
 struct Dir {
 	vector<struct Dir*> sub_dirs;
-	struct Dir* parent_dir;
+	struct Dir* const parent_dir;
+	const string name;
 	uint32_t size;
-	string name;
 
-	Dir(struct Dir* _parent_dir, string _name) : parent_dir(_parent_dir), size(0), name(_name) {}
+	Dir(struct Dir* const _parent_dir, const string _name) : sub_dirs(), parent_dir(_parent_dir), name(_name), size(0) {}
 };
 
-static void dfs_update_size(struct Dir* dir) {
-	for(struct Dir* sub_dir : dir->sub_dirs)
+static void dfs_update_size(struct Dir* const dir) {
+	for(struct Dir* const sub_dir : dir->sub_dirs)
 		dfs_update_size(sub_dir);
 
 	if(dir->parent_dir != nullptr)
 		dir->parent_dir->size += dir->size;
 }
 
-static void dfs_find_size(struct Dir* dir, uint32_t& smallest, const uint32_t required) {
-	for(struct Dir* sub_dir : dir->sub_dirs)
+static void dfs_find_size(const struct Dir* const dir, uint32_t& smallest, const uint32_t required) {
+	for(const struct Dir* const sub_dir : dir->sub_dirs)
 		dfs_find_size(sub_dir, smallest, required);
 
 	if(dir->size >= required && dir->size < smallest)
@@ -49,9 +49,9 @@ int main(void) {
 					cur_dir = &root;
 				else {
 					const string new_dir_name = line.substr(5);
-					for(struct Dir* sub_dir : cur_dir->sub_dirs)
+					for(const struct Dir* const sub_dir : cur_dir->sub_dirs)
 						if(sub_dir->name == new_dir_name) {
-							cur_dir = sub_dir;
+							cur_dir = const_cast<struct Dir*>(sub_dir);
 							goto repeat;
 						}
 					exit(EXIT_FAILURE);
@@ -59,7 +59,7 @@ int main(void) {
 			}
 
 		} else if(line[0] == 'd') // New dir
-				cur_dir->sub_dirs.push_back(new struct Dir(cur_dir, line.substr(4)));
+			cur_dir->sub_dirs.push_back(new struct Dir(cur_dir, line.substr(4)));
 		else // File size
 			cur_dir->size += stoi(line);
 repeat:
