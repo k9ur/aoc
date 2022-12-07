@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 using namespace std;
 

@@ -2,13 +2,11 @@
 #include <string>
 #include <cassert>
 #include <numeric>
-#include <stdint.h>
+#include <cstdint>
+#include <bit>
 
 using namespace std;
 
-#ifdef gnu
-[[using gnu : const, always_inline, hot]]
-#endif
 static inline constexpr uint8_t priority(const char& c) {
 	return c - 'A' > 26 ? c + 1 - 'a'
 	                    : c + 27 - 'A';
@@ -53,11 +51,11 @@ breaker:
 			continue;
 		count = 0;
 
-		const uint64_t res_bits = accumulate(line_bits + 1, line_bits + size, line_bits[0], [](const uint64_t a, const uint64_t b) {
+		const uint64_t res_bits = reduce(line_bits + 1, line_bits + size, line_bits[0], [](const uint64_t a, const uint64_t b) {
 			return a & b;
 		});
-		assert(res_bits >> __builtin_ctzll(res_bits) == 1);
-		priority_sum += priority('A' + __builtin_ctzll(res_bits));
+		assert(popcount(res_bits) == 1);
+		priority_sum += priority('A' + countr_zero(res_bits));
 	}
 #endif
 	assert(count == 0);

@@ -1,13 +1,10 @@
 #include <iostream>
 #include <string>
 #include <numeric>
-#include <stdint.h>
+#include <cstdint>
 
 using namespace std;
 
-#ifdef gnu
-[[using gnu : hot]]
-#endif
 static inline constexpr void update(uint32_t& cal, uint32_t max_cals[3]) {
 	if(cal <= max_cals[2]) [[likely]] {}
 	else if(cal <= max_cals[1])

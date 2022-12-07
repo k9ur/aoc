@@ -1,12 +1,9 @@
 #include <iostream>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 using namespace std;
 
-#ifdef gnu
-[[using gnu : always_inline, hot]]
-#endif
 static inline constexpr void update(uint32_t& cal, uint32_t& max_cal) {
 	if(cal > max_cal)
 		max_cal = cal;

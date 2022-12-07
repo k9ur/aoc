@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 using namespace std;
 

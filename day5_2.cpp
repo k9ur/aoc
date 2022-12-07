@@ -1,30 +1,40 @@
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <cassert>
 #include <vector>
 #include <ranges>
-#include <stdint.h>
+#include <cstdint>
 
 using namespace std;
+
+#ifdef gnu
+[[using gnu : const]]
+#endif
+static inline int svtoi(const string_view& str_view, size_t* idx = 0, int base = 10) {
+	return stoi(static_cast<string>(str_view), idx, base);
+}
 
 int main(void) {
 	vector<string> init, pos;
 	string line, msg;
+	string_view line_view;
 
-	char c;
-	string::size_type i;
+	string_view::size_type i;
 	while(getline(cin, line)) {
 		if(line.empty()) [[unlikely]]
 			continue;
 
 		else if(line[0] == 'm') [[likely]] { // Move
-			for(i = 6; line[i] != ' '; ++i);
-			const size_t count = stoi(line.substr(5, i - 5));
-			string::size_type old_i = i + 6;
+			line_view = line;
 
-			for(i += 7; line[i] != ' '; ++i);
-			const size_t from = stoi(line.substr(old_i, i - old_i)) - 1,
-			               to = stoi(line.substr(i + 4, line.size() - i - 3)) - 1;
+			for(i = 6; line_view[i] != ' '; ++i);
+			const size_t count = svtoi(line_view.substr(5, i - 5));
+			const string_view::size_type old_i = i + 6;
+
+			for(i += 7; line_view[i] != ' '; ++i);
+			const size_t from = svtoi(line_view.substr(old_i, i - old_i)) - 1,
+			               to = svtoi(line_view.substr(i + 4, line_view.size() - i - 3)) - 1;
 
 			assert(pos[from].size() >= count);
 			pos[to] += pos[from].substr(pos[from].size() - count, count);
@@ -34,13 +44,16 @@ int main(void) {
 			init.push_back(line);
 		
 		} else [[unlikely]] { // Row numbers
-			i = line.size() - 3;
-			while(line[i] != ' ')
+			line_view = line;
+
+			i = line_view.size() - 3;
+			while(line_view[i] != ' ')
 				--i;
 
-			const size_t rows = stoi(line.substr(i + 1, line.size() - i - 2));
+			const size_t rows = svtoi(line_view.substr(i + 1, line_view.size() - i - 2));
 			pos.resize(rows);
 
+			char c;
 			for(const string& s : init | views::reverse)
 				for(i = 0; i < rows; ++i)
 					if((c = s[i * 4 + 1]) != ' ')
