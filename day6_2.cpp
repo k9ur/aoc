@@ -11,7 +11,7 @@ int main(void) {
 	uint32_t bits;
 	string line;
 
-	getline(cin, line);
+	cin >> line;
 	assert(line.size() >= size);
 #if 0
 	do {

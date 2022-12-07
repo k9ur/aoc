@@ -10,7 +10,7 @@
 using namespace std;
 
 #ifdef gnu
-[[using gnu : const]]
+[[using gnu : pure]]
 #endif
 static inline int svtoi(const string_view& str_view, size_t* idx = 0, int base = 10) {
 	return stoi(static_cast<string>(str_view), idx, base);
