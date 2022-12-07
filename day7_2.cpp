@@ -1,18 +1,10 @@
 #include <iostream>
 #include <cassert>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <cstdint>
 
 using namespace std;
-
-#ifdef gnu
-[[using gnu : pure]]
-#endif
-static inline int svtoi(const string_view& str_view, size_t* idx = 0, int base = 10) {
-	return stoi(static_cast<string>(str_view), idx, base);
-}
 
 struct Dir {
 	vector<struct Dir*> sub_dirs;
@@ -43,19 +35,18 @@ int main(void) {
 	constexpr uint32_t total_size = 70'000'000,
 	                   required_size = 30'000'000;
 	string line;
-	string_view line_view;
 	struct Dir root = Dir(nullptr, "/");
 	struct Dir* cur_dir;
 
 	// Ignore first line to cd into /
 	while(getline(cin, line)) {
-		if(line[0] == '$') {
+		if(line[0] == '$') { // Command
 
 			if(line[2] == 'c') {
 				if(line[5] == '.') { // Go back
 					cur_dir = cur_dir->parent_dir;
 					assert(cur_dir != nullptr);
-				} else if(line[5] == '/')
+				} else if(line[5] == '/') // Root
 					cur_dir = &root;
 				else {
 					const string new_dir_name = line.substr(5);
@@ -68,18 +59,10 @@ int main(void) {
 				}
 			}
 
-		} else {
-			if(line[0] == 'd') // New dir
+		} else if(line[0] == 'd') // New dir
 				cur_dir->sub_dirs.push_back(new struct Dir(cur_dir, line.substr(4)));
-			else { // File size
-				line_view = line;
-				string::size_type i = 0;
-				while(line_view[i] >= '0' && line_view[i] <= '9')
-					++i;
-				assert(i);
-				cur_dir->size += svtoi(line_view.substr(0, i + 1));
-			}
-		}
+		else // File size
+			cur_dir->size += stoi(line);
 repeat:
 		;
 	}
