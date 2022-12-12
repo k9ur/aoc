@@ -1,23 +1,27 @@
 #include <iostream>
 #include <cassert>
 #include <string>
+#include <string_view>
 #include <vector>
+#include <memory>
 #include <cstdint>
 
 using namespace std;
 
 struct Dir {
-	vector<Dir*> sub_dirs;
+	vector<unique_ptr<Dir>> sub_dirs;
 	Dir* const parent_dir = nullptr;
 	const string name;
 	uint32_t size = 0;
 
-	Dir(Dir* const _parent_dir, const string&& _name) : parent_dir(_parent_dir), name(move(_name)) {}
+	static constexpr uint32_t max_size = 100'000;
 
-	template<uint32_t max_size>
+	Dir() : name("/") {}
+	Dir(Dir& _parent_dir, string&& _name) : parent_dir(&_parent_dir), name(move(_name)) {}
+
 	constexpr void dfs_update(uint32_t& sum) noexcept {
-		for(Dir* const sub_dir : sub_dirs)
-			sub_dir->dfs_update<max_size>(sum);
+		for(unique_ptr<Dir>& sub_dir : sub_dirs)
+			sub_dir->dfs_update(sum);
 
 		if(parent_dir != nullptr)
 			parent_dir->size += size;
@@ -27,9 +31,8 @@ struct Dir {
 };
 
 int main(void) {
-	constexpr uint32_t max_size = 100'000;
 	string line;
-	Dir root = Dir(nullptr, "/");
+	Dir root;
 	Dir* cur_dir = nullptr;
 
 	while(getline(cin, line)) {
@@ -42,10 +45,10 @@ int main(void) {
 				} else if(line[5] == '/') // Root
 					cur_dir = &root;
 				else {
-					const string new_dir_name = line.substr(5);
-					for(Dir* const sub_dir : cur_dir->sub_dirs)
+					const string_view new_dir_name = string_view(line).substr(5);
+					for(unique_ptr<Dir>& sub_dir : cur_dir->sub_dirs)
 						if(sub_dir->name == new_dir_name) {
-							cur_dir = sub_dir;
+							cur_dir = sub_dir.get();
 							goto repeat;
 						}
 					exit(EXIT_FAILURE);
@@ -53,7 +56,7 @@ int main(void) {
 			}
 
 		} else if(line[0] == 'd') // New dir
-			cur_dir->sub_dirs.push_back(new Dir(cur_dir, line.substr(4)));
+			cur_dir->sub_dirs.push_back(make_unique<Dir>(*cur_dir, line.substr(4)));
 		else // File size
 			cur_dir->size += stoul(line);
 repeat:
@@ -61,7 +64,7 @@ repeat:
 	}
 
 	uint32_t sum = 0;
-	root.dfs_update<max_size>(sum);
+	root.dfs_update(sum);
 
 	cout << sum << '\n';
 	return 0;

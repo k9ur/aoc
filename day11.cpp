@@ -8,12 +8,13 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <memory>
 #include <cstdint>
 
 using namespace std;
 
 template<integral T, int base = 10>
-constexpr T svto(const string_view& sv) {
+T svto(const string_view& sv) {
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
@@ -29,7 +30,7 @@ struct Monkey {
 	const uint8_t op_val;
 	const uint8_t op : 2;
 
-	Monkey(const vector<uint64_t>& _items, const size_t _ind_if_t, const size_t _ind_if_f, const uint8_t _divisor, const uint8_t _op, const uint8_t _op_val = 0) : items(_items), ind_if_t(_ind_if_t), ind_if_f(_ind_if_f), divisor(_divisor), op(_op), op_val(_op_val) {}
+	Monkey(vector<uint64_t>& _items, size_t _ind_if_t, size_t _ind_if_f, uint8_t _divisor, uint8_t _op, uint8_t _op_val = 0) : items(_items), ind_if_t(_ind_if_t), ind_if_f(_ind_if_f), divisor(_divisor), op(_op), op_val(_op_val) {}
 
 	constexpr void add_inspections() noexcept {
 		inspections += items.size();
@@ -38,9 +39,8 @@ struct Monkey {
 
 int main(void) {
 	constexpr uint16_t rounds = 20;
-	vector<Monkey*> monkeys;
+	vector<unique_ptr<Monkey>> monkeys;
 	string line;
-	string_view line_view;
 	
 	while(!cin.eof()) {
 		getline(cin, line);
@@ -61,32 +61,27 @@ int main(void) {
 				op = 3;
 			else {
 				op = 2;
-				line_view = line;
-				op_val = svto<uint8_t>(line_view.substr(25));
+				op_val = svto<uint8_t>(string_view(line).substr(25));
 			}
 		} else {
 			op = 1;
-			line_view = line;
-			op_val = svto<uint8_t>(line_view.substr(25));
+			op_val = svto<uint8_t>(string_view(line).substr(25));
 		}
 
 		getline(cin, line);
-		line_view = line;
-		const uint8_t divisor = svto<uint8_t>(line_view.substr(21));
+		const uint8_t divisor = svto<uint8_t>(string_view(line).substr(21));
 		getline(cin, line);
-		line_view = line;
-		const uint8_t ind_if_t = svto<uint8_t>(line_view.substr(29));
+		const uint8_t ind_if_t = svto<uint8_t>(string_view(line).substr(29));
 		getline(cin, line);
-		line_view = line;
-		const uint8_t ind_if_f = svto<uint8_t>(line_view.substr(30));
+		const uint8_t ind_if_f = svto<uint8_t>(string_view(line).substr(30));
 
 		if(!cin.eof())
 			getline(cin, line);
-		monkeys.push_back(new Monkey(items, ind_if_t, ind_if_f, divisor, op, op_val));
+		monkeys.push_back(make_unique<Monkey>(items, ind_if_t, ind_if_f, divisor, op, op_val));
 	}
 
 	for(uint16_t r = 0; r != rounds; ++r)
-		for(Monkey* const monkey : monkeys) {
+		for(unique_ptr<Monkey>& monkey : monkeys) {
 			monkey->add_inspections();
 			for(uint64_t item : monkey->items) {
 				switch(monkey->op) {
@@ -106,7 +101,7 @@ int main(void) {
 			monkey->items.clear();
 		}
 
-	sort(monkeys.begin(), monkeys.end(), [](const Monkey* const a, const Monkey* const b) {
+	sort(monkeys.begin(), monkeys.end(), [](unique_ptr<Monkey>& a, unique_ptr<Monkey>& b) {
 		return a->inspections > b->inspections;
 	});
 

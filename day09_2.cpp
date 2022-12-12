@@ -6,12 +6,13 @@
 #include <concepts>
 #include <vector>
 #include <array>
+#include <memory>
 #include <cstdint>
 
 using namespace std;
 
 template<integral T, int base = 10>
-constexpr T svto(const string_view& sv) {
+T svto(const string_view& sv) {
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
@@ -23,7 +24,7 @@ struct Point {
 	size_t y;
 
 	Point() {}
-	Point(const size_t _x, const size_t _y) : x(_x), y(_y) {}
+	Point(size_t _x, size_t _y) : x(_x), y(_y) {}
 };
 
 inline constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
@@ -44,12 +45,13 @@ struct Instruction {
 	const uint32_t moves;
 	const uint8_t dir : 2;
 
-	Instruction(const uint32_t _moves, const uint8_t _dir) : moves(_moves), dir(_dir) {}
+	static constexpr size_t length = 10;
 
-	template<size_t length>
-	constexpr void execute(array<Point, length>& chain, vector<vector<bool>>& grid, uint32_t& visited) const noexcept {
-		Point& head = chain.front(),
-	       &tail = chain.back();
+	Instruction(uint32_t _moves, uint8_t _dir) : moves(_moves), dir(_dir) {}
+
+	void execute(array<Point, length>& chain, vector<vector<bool>>& grid, uint32_t& visited) const noexcept {
+		static Point& head = chain.front(),
+	                  &tail = chain.back();
 		for(uint32_t m = 0; m != moves; ++m) {
 			if(dir & 1) // y-axis
 				dir & 2 ? --head.y : ++head.y;
@@ -74,7 +76,7 @@ struct Instruction {
 	}
 };
 
-void add_instruction(vector<Instruction*>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
+void add_instruction(vector<unique_ptr<Instruction>>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
 	if(dir & 2) {
 		xy -= num;
 		if(xy < maxmin_xy)
@@ -84,13 +86,12 @@ void add_instruction(vector<Instruction*>& instructions, int32_t& xy, int32_t& m
 		if(xy > maxmin_xy)
 			maxmin_xy = xy;
 	}
-	instructions.push_back(new Instruction(num, dir));
+	instructions.push_back(make_unique<Instruction>(num, dir));
 }
 
 int main(void) {
-	vector<Instruction*> instructions;
+	vector<unique_ptr<Instruction>> instructions;
 	string line;
-	string_view line_view;
 
 	int32_t x = 0,
 	        y = 0;
@@ -99,8 +100,7 @@ int main(void) {
 	        max_y = 0,
 	        min_y = 0;
 	while(getline(cin, line)) {
-		line_view = line;
-		const uint32_t num = svto<uint32_t>(line_view.substr(2));
+		const uint32_t num = svto<uint32_t>(string_view(line).substr(2));
 		if(!num)
 			continue;
 		switch(line[0]) {
@@ -127,12 +127,11 @@ int main(void) {
 	grid[-min_y][-min_x] = true;
 
 	uint32_t visited = 1;
-	constexpr size_t length = 10;
-	array<Point, length> chain;
+	array<Point, Instruction::length> chain;
 	chain.fill(Point(-min_x, -min_y));
 
-	for(const Instruction* const ins : instructions)
-		ins->execute<length>(chain, grid, visited);
+	for(unique_ptr<Instruction>& ins : instructions)
+		ins->execute(chain, grid, visited);
 
 	cout << visited << '\n';
 	return 0;

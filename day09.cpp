@@ -5,12 +5,13 @@
 #include <charconv>
 #include <concepts>
 #include <vector>
+#include <memory>
 #include <cstdint>
 
 using namespace std;
 
 template<integral T, int base = 10>
-constexpr T svto(const string_view& sv) {
+T svto(const string_view& sv) {
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
@@ -28,7 +29,7 @@ struct Instruction {
 	const uint32_t moves;
 	const uint8_t dir : 2;
 
-	Instruction(const uint32_t _moves, const uint8_t _dir) : moves(_moves), dir(_dir) {}
+	Instruction(uint32_t _moves, uint8_t _dir) : moves(_moves), dir(_dir) {}
 
 	void constexpr execute(vector<vector<bool>>& grid, uint32_t& visited, const bool x, size_t& T_axis, size_t& T_other, size_t& H_axis, const size_t& H_other) const noexcept {
 		uint32_t moved = 0;
@@ -50,7 +51,7 @@ struct Instruction {
 	}
 };
 
-void add_instruction(vector<Instruction*>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
+void add_instruction(vector<unique_ptr<Instruction>>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
 	if(dir & 2) {
 		xy -= num;
 		if(xy < maxmin_xy)
@@ -60,13 +61,12 @@ void add_instruction(vector<Instruction*>& instructions, int32_t& xy, int32_t& m
 		if(xy > maxmin_xy)
 			maxmin_xy = xy;
 	}
-	instructions.push_back(new Instruction(num, dir));
+	instructions.push_back(make_unique<Instruction>(num, dir));
 }
 
 int main(void) {
-	vector<Instruction*> instructions;
+	vector<unique_ptr<Instruction>> instructions;
 	string line;
-	string_view line_view;
 
 	int32_t x = 0,
 	        y = 0;
@@ -75,8 +75,7 @@ int main(void) {
 	        max_y = 0,
 	        min_y = 0;
 	while(getline(cin, line)) {
-		line_view = line;
-		const uint32_t num = svto<uint32_t>(line_view.substr(2));
+		const uint32_t num = svto<uint32_t>(string_view(line).substr(2));
 		if(!num)
 			continue;
 		switch(line[0]) {
@@ -106,7 +105,7 @@ int main(void) {
 		row.resize(max_x - min_x + 1);
 
 	uint32_t visited = 0;
-	for(const Instruction* const ins : instructions) {
+	for(unique_ptr<Instruction>& ins : instructions) {
 		if(ins->dir & 1) // y-axis
 			ins->execute(grid, visited, 0, T_y, T_x, H_y, H_x);
 		else // x-axis

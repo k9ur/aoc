@@ -10,7 +10,7 @@
 using namespace std;
 
 template<integral T, int base = 10>
-constexpr T svto(const string_view& sv) {
+T svto(const string_view& sv) {
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
@@ -43,8 +43,7 @@ int main(void) {
 		else {
 			update_cycle(cycle, cycles, cycles_i, sum, X);
 			update_cycle(cycle, cycles, cycles_i, sum, X);
-			const string_view line_view = line;
-			X += svto<int32_t>(line_view.substr(5));
+			X += svto<int32_t>(string_view(line).substr(5));
 		}
 	}
 

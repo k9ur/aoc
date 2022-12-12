@@ -10,15 +10,15 @@
 using namespace std;
 
 template<integral T, int base = 10>
-constexpr T svto(const string_view& sv) {
+T svto(const string_view& sv) {
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
 	return val;
 }
 
-template<size_t N>
-inline constexpr void update_cycle(uint32_t& cycle, array<string, N>& screen, const int32_t X, const size_t width) {
+template<size_t width, size_t N>
+inline constexpr void update_cycle(uint32_t& cycle, array<string, N>& screen, const int32_t X) {
 	if(abs(X - static_cast<int32_t>(cycle % width)) <= 1)
 		screen[cycle / width][cycle % width] = '#';
 	++cycle;
@@ -38,12 +38,11 @@ int main(void) {
 	string line;
 	while(getline(cin, line)) {
 		if(line[0] == 'n')
-			update_cycle(cycle, screen, X, width);
+			update_cycle<width>(cycle, screen, X);
 		else {
-			update_cycle(cycle, screen, X, width);
-			update_cycle(cycle, screen, X, width);
-			const string_view line_view = line;
-			X += svto<int32_t>(line_view.substr(5));
+			update_cycle<width>(cycle, screen, X);
+			update_cycle<width>(cycle, screen, X);
+			X += svto<int32_t>(string_view(line).substr(5));
 		}
 	}
 
