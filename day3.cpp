@@ -2,12 +2,15 @@
 #include <string>
 #include <string_view>
 #include <cassert>
-#include <cstdint>
 #include <bit>
+#include <cstdint>
 
 using namespace std;
 
-static inline constexpr uint8_t priority(const char& c) {
+#ifdef gnu
+[[using gnu : const]]
+#endif
+inline constexpr uint8_t priority(const char c) {
 	return c - 'A' > 26 ? c + 1 - 'a'
 	                    : c + 27 - 'A';
 }

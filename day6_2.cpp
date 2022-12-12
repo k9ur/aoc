@@ -22,12 +22,11 @@ int main(void) {
 	} while(__builtin_popcount(bits) != 4);
 	--ind;
 #else
-	bool continuer = 1;
 	char c;
 
 repeat:
 	bits = 0;
-	for(string::size_type i = 0; i < size; ++i) {
+	for(string::size_type i = 0; i != size; ++i) {
 		c = line[i + ind] - 'a';
 		if(bits >> c & 1) {
 			assert(++ind <= line.size());

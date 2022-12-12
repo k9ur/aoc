@@ -2,20 +2,24 @@
 #include <string>
 #include <cassert>
 #include <numeric>
-#include <cstdint>
+#include <array>
 #include <bit>
+#include <cstdint>
 
 using namespace std;
 
-static inline constexpr uint8_t priority(const char& c) {
+#ifdef gnu
+[[using gnu : const]]
+#endif
+inline constexpr uint8_t priority(const char c) {
 	return c - 'A' > 26 ? c + 1 - 'a'
 	                    : c + 27 - 'A';
 }
 
 int main(void) {
 	constexpr size_t size = 3;
-	uint32_t priority_sum = 0,
-	         count = 0;
+	size_t count = 0;
+	uint32_t priority_sum = 0;
 
 #if 0
 	string lines[size];
@@ -40,7 +44,7 @@ breaker:
 	}
 #else
 	string line;
-	uint64_t line_bits[size];
+	array<uint64_t, size> line_bits;
 
 	while(getline(cin, line)) {
 		line_bits[count] = 0;
@@ -51,7 +55,7 @@ breaker:
 			continue;
 		count = 0;
 
-		const uint64_t res_bits = reduce(line_bits + 1, line_bits + size, line_bits[0], [](const uint64_t a, const uint64_t b) {
+		const uint64_t res_bits = reduce(line_bits.cbegin() + 1, line_bits.cend(), line_bits.front(), [](const uint64_t a, const uint64_t b) {
 			return a & b;
 		});
 		assert(popcount(res_bits) == 1);

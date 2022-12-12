@@ -4,7 +4,7 @@
 
 using namespace std;
 
-static inline constexpr void update(uint32_t& cal, uint32_t& max_cal) {
+inline constexpr void update(uint32_t& cal, uint32_t& max_cal) {
 	if(cal > max_cal)
 		max_cal = cal;
 	cal = 0;
@@ -19,7 +19,7 @@ int main(void) {
 		if(line.empty())
 			update(cal, max_cal);
 		else
-			cal += stoi(line);
+			cal += stoul(line);
 	}
 	update(cal, max_cal);
 
