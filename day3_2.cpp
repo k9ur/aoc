@@ -48,14 +48,14 @@ breaker:
 
 	while(getline(cin, line)) {
 		line_bits[count] = 0;
-		for(const char& c : line)
+		for(const char c : line)
 			line_bits[count] |= 1ull << (c - 'A');
 
 		if(++count != size)
 			continue;
 		count = 0;
 
-		const uint64_t res_bits = reduce(line_bits.cbegin() + 1, line_bits.cend(), line_bits.front(), [](const uint64_t a, const uint64_t b) {
+		const uint64_t res_bits = reduce(next(line_bits.cbegin()), line_bits.cend(), line_bits.front(), [](const uint64_t a, const uint64_t b) {
 			return a & b;
 		});
 		assert(popcount(res_bits) == 1);

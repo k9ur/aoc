@@ -1,23 +1,21 @@
 #include <iostream>
 #include <string>
 #include <numeric>
+#include <algorithm>
 #include <array>
 #include <cstdint>
 
 using namespace std;
 
-template<size_t N> // FIXME
-inline constexpr void update(uint32_t& cal, array<uint32_t, N>& max_cals) {
-	if(cal <= max_cals[2]) [[likely]] {}
-	else if(cal <= max_cals[1])
-		max_cals[2] = cal;
-	else if(cal <= max_cals[0]) {
-		max_cals[2] = max_cals[1];
-		max_cals[1] = cal;
-	} else [[unlikely]] {
-		max_cals[2] = max_cals[1];
-		max_cals[1] = max_cals[0];
-		max_cals[0] = cal;
+template<size_t N>
+void update(uint32_t& cal, array<uint32_t, N>& max_cals) {
+	size_t i;
+	for(i = N; i; --i)
+		if(cal <= max_cals[i - 1])
+			break;
+	if(i != N) {
+		move(next(max_cals.begin(), i), prev(max_cals.end()), next(max_cals.begin(), i + 1));
+		max_cals[i] = cal;
 	}
 	cal = 0;
 }

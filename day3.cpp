@@ -44,9 +44,9 @@ breaker:
 		lower = 0;
 
 		const string::size_type half = line_view.size() >> 1;
-		for(const char& c : line_view.substr(0, half))
+		for(const char c : line_view.substr(0, half))
 			lower |= 1ull << (c - 'A');
-		for(const char& c : line_view.substr(half))
+		for(const char c : line_view.substr(half))
 			upper |= 1ull << (c - 'A');
 
 		const uint64_t res_bits = lower & upper;
