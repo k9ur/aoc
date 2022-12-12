@@ -5,6 +5,7 @@
 #include <charconv>
 #include <concepts>
 #include <vector>
+#include <array>
 #include <cstdint>
 
 using namespace std;
@@ -17,16 +18,12 @@ constexpr T svto(const string_view& sv) {
 	return val;
 }
 
-struct Instruction {
-	const uint32_t moves;
-	const uint8_t dir : 2;
-
-	Instruction(const uint32_t _moves, const uint8_t _dir) : moves(_moves), dir(_dir) {}
-};
-
 struct Point {
-	size_t y;
 	size_t x;
+	size_t y;
+
+	Point() {}
+	Point(const size_t _x, const size_t _y) : x(_x), y(_y) {}
 };
 
 inline constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
@@ -41,6 +38,53 @@ inline constexpr void update_axis(const size_t prev, size_t& current) {
 		++current;
 	else if(prev < current)
 		--current;
+}
+
+struct Instruction {
+	const uint32_t moves;
+	const uint8_t dir : 2;
+
+	Instruction(const uint32_t _moves, const uint8_t _dir) : moves(_moves), dir(_dir) {}
+
+	template<size_t length>
+	constexpr void execute(array<Point, length>& chain, vector<vector<bool>>& grid, uint32_t& visited) const noexcept {
+		Point& head = chain.front(),
+	       &tail = chain.back();
+		for(uint32_t m = 0; m != moves; ++m) {
+			if(dir & 1) // y-axis
+				dir & 2 ? --head.y : ++head.y;
+			else // x-axis
+				dir & 2 ? --head.x : ++head.x;
+
+			size_t i;
+			for(i = 1; i != length; ++i) {
+				Point& current = chain[i];
+				const Point& prev = chain[i - 1];
+
+				if(abs(static_cast<int32_t>(current.x) - static_cast<int32_t>(prev.x)) == 2
+					|| abs(static_cast<int32_t>(current.y) - static_cast<int32_t>(prev.y)) == 2) {
+					update_axis(prev.x, current.x);
+					update_axis(prev.y, current.y);
+				} else
+					break;
+			}
+			if(i == length) // Tail moved
+				set_cell(grid, visited, tail.x, tail.y);
+		}
+	}
+};
+
+void add_instruction(vector<Instruction*>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
+	if(dir & 2) {
+		xy -= num;
+		if(xy < maxmin_xy)
+			maxmin_xy = xy;
+	} else {
+		xy += num;
+		if(xy > maxmin_xy)
+			maxmin_xy = xy;
+	}
+	instructions.push_back(new Instruction(num, dir));
 }
 
 int main(void) {
@@ -61,28 +105,16 @@ int main(void) {
 			continue;
 		switch(line[0]) {
 			case 'R':
-				x += num;
-				if(x > max_x)
-					max_x = x;
-				instructions.push_back(new Instruction(num, 0));
+				add_instruction(instructions, x, max_x, num, 0);
 				break;
 			case 'U':
-				y += num;
-				if(y > max_y)
-					max_y = y;
-				instructions.push_back(new Instruction(num, 1));
+				add_instruction(instructions, y, max_y, num, 1);
 				break;
 			case 'L':
-				x -= num;
-				if(x < min_x)
-					min_x = x;
-				instructions.push_back(new Instruction(num, 2));
+				add_instruction(instructions, x, min_x, num, 2);
 				break;
 			case 'D':
-				y -= num;
-				if(y < min_y)
-					min_y = y;
-				instructions.push_back(new Instruction(num, 1 | 2));
+				add_instruction(instructions, y, min_y, num, 1 | 2);
 				break;
 			default:
 				exit(EXIT_FAILURE);
@@ -96,36 +128,11 @@ int main(void) {
 
 	uint32_t visited = 1;
 	constexpr size_t length = 10;
-	Point chain[length];
-	for(Point& point : chain) {
-		point.x = -min_x;
-		point.y = -min_y;
-	}
+	array<Point, length> chain;
+	chain.fill(Point(-min_x, -min_y));
 
-	Point& head = chain[0],
-	       &tail = chain[length - 1];
 	for(const Instruction* const ins : instructions)
-		for(uint32_t m = 0; m != ins->moves; ++m) {
-			if(ins->dir & 1) // y-axis
-				ins->dir & 2 ? --head.y : ++head.y;
-			else // x-axis
-				ins->dir & 2 ? --head.x : ++head.x;
-
-			size_t i;
-			for(i = 1; i != length; ++i) {
-				Point& current = chain[i];
-				const Point& prev = chain[i - 1];
-
-				if(abs(static_cast<int>(current.x) - static_cast<int>(prev.x)) == 2
-					|| abs(static_cast<int>(current.y) - static_cast<int>(prev.y)) == 2) {
-					update_axis(prev.x, current.x);
-					update_axis(prev.y, current.y);
-				} else
-					break;
-			}
-			if(i == length) // Tail moved
-				set_cell(grid, visited, tail.x, tail.y);
-		}
+		ins->execute<length>(chain, grid, visited);
 
 	cout << visited << '\n';
 	return 0;

@@ -13,25 +13,24 @@ struct Dir {
 	uint32_t size = 0;
 
 	Dir(Dir* const _parent_dir, const string&& _name) : parent_dir(_parent_dir), name(move(_name)) {}
+
+	constexpr void dfs_update_size() noexcept {
+		for(Dir* const sub_dir : sub_dirs)
+			sub_dir->dfs_update_size();
+
+		if(parent_dir != nullptr)
+			parent_dir->size += size;
+	}
+	constexpr void dfs_find_size(uint32_t& smallest, const uint32_t required) const noexcept {
+		if(size < required) // All subdirs will be even smaller
+			return;
+		for(const Dir* const sub_dir : sub_dirs)
+			sub_dir->dfs_find_size(smallest, required);
+
+		if(size < smallest)
+			smallest = size;
+	}
 };
-
-constexpr void dfs_update_size(Dir* const dir) {
-	for(Dir* const sub_dir : dir->sub_dirs)
-		dfs_update_size(sub_dir);
-
-	if(dir->parent_dir != nullptr)
-		dir->parent_dir->size += dir->size;
-}
-
-constexpr void dfs_find_size(const Dir* const dir, uint32_t& smallest, const uint32_t required) {
-	if(dir->size < required) // All subdirs will be even smaller
-		return;
-	for(const Dir* const sub_dir : dir->sub_dirs)
-		dfs_find_size(sub_dir, smallest, required);
-
-	if(dir->size < smallest)
-		smallest = dir->size;
-}
 
 int main(void) {
 	constexpr uint32_t total_size = 70'000'000,
@@ -63,12 +62,12 @@ int main(void) {
 		} else if(line[0] == 'd') // New dir
 			cur_dir->sub_dirs.push_back(new Dir(cur_dir, line.substr(4)));
 		else // File size
-			cur_dir->size += stoi(line);
+			cur_dir->size += stoul(line);
 repeat:
 		;
 	}
 
-	dfs_update_size(&root);
+	root.dfs_update_size();
 
 	assert(total_size > root.size);
 	const uint32_t unused_size = total_size - root.size;
@@ -76,7 +75,7 @@ repeat:
 	const uint32_t ntf_size = required_size - unused_size; // Need to free size
 
 	uint32_t smallest = root.size;
-	dfs_find_size(&root, smallest, ntf_size);
+	root.dfs_find_size(smallest, ntf_size);
 
 	cout << smallest << '\n';
 	return 0;

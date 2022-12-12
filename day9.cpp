@@ -17,13 +17,6 @@ constexpr T svto(const string_view& sv) {
 	return val;
 }
 
-struct Instruction {
-	const uint32_t moves;
-	const uint8_t dir : 2;
-
-	Instruction(const uint32_t _moves, const uint8_t _dir) : moves(_moves), dir(_dir) {}
-};
-
 inline constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
 	if(!grid[y][x]) {
 		++visited;
@@ -31,23 +24,43 @@ inline constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, co
 	}
 }
 
-void constexpr do_instruction(vector<vector<bool>>& grid, uint32_t& visited, const Instruction* const ins, const bool x, size_t& T_axis, size_t& T_other, size_t& H_axis, const size_t& H_other) {
-	uint32_t moved = 0;
-	while(T_other != H_other && moved < ins->moves) {
-		++moved;
-		ins->dir & 2 ? --H_axis : ++H_axis;
-		if(abs(static_cast<int>(H_axis) - static_cast<int>(T_axis)) == 2) {
-			T_other = H_other;
-			T_axis = ins->dir & 2 ? H_axis + 1 : H_axis - 1;
+struct Instruction {
+	const uint32_t moves;
+	const uint8_t dir : 2;
+
+	Instruction(const uint32_t _moves, const uint8_t _dir) : moves(_moves), dir(_dir) {}
+
+	void constexpr execute(vector<vector<bool>>& grid, uint32_t& visited, const bool x, size_t& T_axis, size_t& T_other, size_t& H_axis, const size_t& H_other) const noexcept {
+		uint32_t moved = 0;
+		while(T_other != H_other && moved < moves) {
+			++moved;
+			dir & 2 ? --H_axis : ++H_axis;
+			if(abs(static_cast<int32_t>(H_axis) - static_cast<int32_t>(T_axis)) == 2) {
+				T_other = H_other;
+				T_axis = dir & 2 ? H_axis + 1 : H_axis - 1;
+				set_cell(grid, visited, x ? T_axis : T_other, x ? T_other : T_axis);
+				break;
+			}
+		}
+		dir & 2 ? H_axis -= moves - moved : H_axis += moves - moved;
+		while(dir & 2 ? T_axis > H_axis + 1 : T_axis < H_axis - 1) {
 			set_cell(grid, visited, x ? T_axis : T_other, x ? T_other : T_axis);
-			break;
+			dir & 2 ? --T_axis : ++T_axis;
 		}
 	}
-	ins->dir & 2 ? H_axis -= ins->moves - moved : H_axis += ins->moves - moved;
-	while(ins->dir & 2 ? T_axis > H_axis + 1 : T_axis < H_axis - 1) {
-		set_cell(grid, visited, x ? T_axis : T_other, x ? T_other : T_axis);
-		ins->dir & 2 ? --T_axis : ++T_axis;
+};
+
+void add_instruction(vector<Instruction*>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
+	if(dir & 2) {
+		xy -= num;
+		if(xy < maxmin_xy)
+			maxmin_xy = xy;
+	} else {
+		xy += num;
+		if(xy > maxmin_xy)
+			maxmin_xy = xy;
 	}
+	instructions.push_back(new Instruction(num, dir));
 }
 
 int main(void) {
@@ -68,28 +81,16 @@ int main(void) {
 			continue;
 		switch(line[0]) {
 			case 'R':
-				x += num;
-				if(x > max_x)
-					max_x = x;
-				instructions.push_back(new Instruction(num, 0));
+				add_instruction(instructions, x, max_x, num, 0);
 				break;
 			case 'U':
-				y += num;
-				if(y > max_y)
-					max_y = y;
-				instructions.push_back(new Instruction(num, 1));
+				add_instruction(instructions, y, max_y, num, 1);
 				break;
 			case 'L':
-				x -= num;
-				if(x < min_x)
-					min_x = x;
-				instructions.push_back(new Instruction(num, 2));
+				add_instruction(instructions, x, min_x, num, 2);
 				break;
 			case 'D':
-				y -= num;
-				if(y < min_y)
-					min_y = y;
-				instructions.push_back(new Instruction(num, 1 | 2));
+				add_instruction(instructions, y, min_y, num, 1 | 2);
 				break;
 			default:
 				exit(EXIT_FAILURE);
@@ -107,9 +108,9 @@ int main(void) {
 	uint32_t visited = 0;
 	for(const Instruction* const ins : instructions) {
 		if(ins->dir & 1) // y-axis
-			do_instruction(grid, visited, ins, 0, T_y, T_x, H_y, H_x);
+			ins->execute(grid, visited, 0, T_y, T_x, H_y, H_x);
 		else // x-axis
-			do_instruction(grid, visited, ins, 1, T_x, T_y, H_x, H_y);
+			ins->execute(grid, visited, 1, T_x, T_y, H_x, H_y);
 		set_cell(grid, visited, T_x, T_y);
 	}
 

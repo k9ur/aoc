@@ -13,17 +13,18 @@ struct Dir {
 	uint32_t size = 0;
 
 	Dir(Dir* const _parent_dir, const string&& _name) : parent_dir(_parent_dir), name(move(_name)) {}
+
+	template<uint32_t max_size>
+	constexpr void dfs_update(uint32_t& sum) noexcept {
+		for(Dir* const sub_dir : sub_dirs)
+			sub_dir->dfs_update<max_size>(sum);
+
+		if(parent_dir != nullptr)
+			parent_dir->size += size;
+		if(size <= max_size)
+			sum += size;
+	}
 };
-
-constexpr void dfs_update(Dir* const dir, uint32_t& sum, const uint32_t max_size) {
-	for(Dir* const sub_dir : dir->sub_dirs)
-		dfs_update(sub_dir, sum, max_size);
-
-	if(dir->parent_dir != nullptr)
-		dir->parent_dir->size += dir->size;
-	if(dir->size <= max_size)
-		sum += dir->size;
-}
 
 int main(void) {
 	constexpr uint32_t max_size = 100'000;
@@ -54,13 +55,13 @@ int main(void) {
 		} else if(line[0] == 'd') // New dir
 			cur_dir->sub_dirs.push_back(new Dir(cur_dir, line.substr(4)));
 		else // File size
-			cur_dir->size += stoi(line);
+			cur_dir->size += stoul(line);
 repeat:
 		;
 	}
 
 	uint32_t sum = 0;
-	dfs_update(&root, sum, max_size);
+	root.dfs_update<max_size>(sum);
 
 	cout << sum << '\n';
 	return 0;
