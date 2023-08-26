@@ -32,8 +32,21 @@ struct Monkey {
 
 	Monkey(vector<uint64_t>& _items, size_t _ind_if_t, size_t _ind_if_f, uint8_t _divisor, uint8_t _op, uint8_t _op_val = 0) : items(_items), ind_if_t(_ind_if_t), ind_if_f(_ind_if_f), divisor(_divisor), op(_op), op_val(_op_val) {}
 
-	constexpr void add_inspections() noexcept {
+	constexpr void add_inspections(void) noexcept {
 		inspections += items.size();
+	}
+	constexpr void interpret_op(uint64_t& item) const noexcept {
+		switch(op) {
+			case 1:
+				item += op_val;
+				break;
+			case 2:
+				item *= op_val;
+				break;
+			case 3:
+				item *= item;
+				break;
+		}
 	}
 };
 
@@ -84,17 +97,7 @@ int main(void) {
 		for(unique_ptr<Monkey>& monkey : monkeys) {
 			monkey->add_inspections();
 			for(uint64_t item : monkey->items) {
-				switch(monkey->op) {
-					case 1:
-						item += monkey->op_val;
-						break;
-					case 2:
-						item *= monkey->op_val;
-						break;
-					case 3:
-						item *= item;
-						break;
-				}
+				monkey->interpret_op(item);
 				item /= 3;
 				monkeys[item % monkey->divisor ? monkey->ind_if_f : monkey->ind_if_t]->items.push_back(move(item));
 			}

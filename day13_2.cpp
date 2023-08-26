@@ -115,14 +115,12 @@ int main(void) {
 	sort(packets.begin(), packets.end(), in_right_order);
 
 	size_t ind;
-	uint32_t decoder;
 	for(ind = 0; packets[ind] != div_packet1; ++ind);
-	decoder = ind + 1;
+	const uint32_t decoder = ind + 1;
 	do
 		++ind;
 	while(packets[ind] != div_packet2);
-	decoder *= ind + 1;
 
-	cout << decoder << '\n';
+	cout << decoder * (ind + 1) << '\n';
 	return 0;
 }

@@ -12,7 +12,7 @@
 using namespace std;
 
 template<integral T, int base = 10>
-constexpr T svto(const string_view& sv) {
+T svto(const string_view& sv) {
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
