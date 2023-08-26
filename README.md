@@ -1,4 +1,4 @@
 # aoc_2022
-Advent of Code 2022 solutions in C++.
+Advent of Code solutions in C++.
 
-My first C++ project
+This started off as my first C++ project
