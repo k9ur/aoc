@@ -15,7 +15,10 @@ struct Dir {
 	uint32_t size = 0;
 
 	Dir() : name("/") {}
-	Dir(Dir& _parent_dir, string&& _name) : parent_dir(&_parent_dir), name(move(_name)) {}
+	Dir(Dir& _parent_dir, string&& _name)
+	  : parent_dir(&_parent_dir)
+	  , name(move(_name))
+	{}
 
 	constexpr void dfs_update_size() noexcept {
 		for(unique_ptr<Dir>& sub_dir : sub_dirs)

@@ -21,7 +21,7 @@ T svto(const string_view& sv) {
 }
 
 template<size_t N>
-inline constexpr void update_cycle(uint32_t& cycle, array<string, N>& screen, const int32_t X) {
+constexpr void update_cycle(uint32_t& cycle, array<string, N>& screen, const int32_t X) {
 	if(abs(X - static_cast<int32_t>(cycle % width)) <= 1)
 		screen[cycle / width][cycle % width] = '#';
 	++cycle;

@@ -17,7 +17,10 @@ struct Dir {
 	static constexpr uint32_t max_size = 100'000;
 
 	Dir() : name("/") {}
-	Dir(Dir& _parent_dir, string&& _name) : parent_dir(&_parent_dir), name(move(_name)) {}
+	Dir(Dir& _parent_dir, string&& _name)
+	  : parent_dir(&_parent_dir)
+	  , name(move(_name))
+	{}
 
 	constexpr void dfs_update(uint32_t& sum) noexcept {
 		for(unique_ptr<Dir>& sub_dir : sub_dirs)

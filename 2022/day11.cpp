@@ -30,7 +30,14 @@ struct Monkey {
 	const uint8_t op_val;
 	const uint8_t op : 2;
 
-	Monkey(vector<uint64_t>& _items, size_t _ind_if_t, size_t _ind_if_f, uint8_t _divisor, uint8_t _op, uint8_t _op_val = 0) : items(_items), ind_if_t(_ind_if_t), ind_if_f(_ind_if_f), divisor(_divisor), op(_op), op_val(_op_val) {}
+	Monkey(vector<uint64_t>& _items, size_t _ind_if_t, size_t _ind_if_f, uint8_t _divisor, uint8_t _op, uint8_t _op_val = 0)
+	  : items(_items)
+	  , ind_if_t(_ind_if_t)
+	  , ind_if_f(_ind_if_f)
+	  , divisor(_divisor)
+	  , op(_op)
+	  , op_val(_op_val)
+	{}
 
 	constexpr void add_inspections(void) noexcept {
 		inspections += items.size();

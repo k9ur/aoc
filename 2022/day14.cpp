@@ -13,7 +13,10 @@ struct Point {
 	size_t y;
 
 	Point() {}
-	Point(size_t _x, size_t _y) : x(_x), y(_y) {}
+	Point(size_t _x, size_t _y)
+	  : x(_x)
+	  , y(_y)
+	{}
 };
 
 enum cell_t : uint8_t {

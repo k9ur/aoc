@@ -18,7 +18,7 @@ T svto(const string_view& sv) {
 	return val;
 }
 
-inline constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
+constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
 	if(!grid[y][x]) {
 		++visited;
 		grid[y][x] = true;
@@ -29,7 +29,10 @@ struct Instruction {
 	const uint32_t moves;
 	const uint8_t dir : 2;
 
-	Instruction(uint32_t _moves, uint8_t _dir) : moves(_moves), dir(_dir) {}
+	Instruction(uint32_t _moves, uint8_t _dir)
+	  : moves(_moves)
+	  , dir(_dir)
+	{}
 
 	void constexpr execute(vector<vector<bool>>& grid, uint32_t& visited, const bool x, size_t& T_axis, size_t& T_other, size_t& H_axis, const size_t& H_other) const noexcept {
 		uint32_t moved = 0;

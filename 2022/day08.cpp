@@ -9,13 +9,13 @@ using namespace std;
 #ifdef gnu
 [[using gnu : const]]
 #endif
-inline constexpr bool seen_yet(const char c) {
+constexpr bool seen_yet(const char c) {
 	return c > '9';
 }
 #ifdef gnu
 [[using gnu : const]]
 #endif
-inline constexpr char parse(const char c) {
+constexpr char parse(const char c) {
 	return seen_yet(c) ? c - 10 : c;
 }
 

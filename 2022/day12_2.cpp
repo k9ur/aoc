@@ -14,7 +14,7 @@ constexpr char start_c = 'S',
 #ifdef gnu
 [[using gnu : const]]
 #endif
-inline constexpr bool is_destination(const char c) {
+constexpr bool is_destination(const char c) {
 	return c == 'a' || c == start_c;
 }
 

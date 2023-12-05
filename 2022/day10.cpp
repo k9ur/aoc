@@ -18,7 +18,7 @@ T svto(const string_view& sv) {
 }
 
 template<size_t N>
-inline constexpr void update_cycle(uint32_t& cycle, const array<const uint32_t, N>& cycles, size_t& cycles_i, int32_t& sum, const int32_t X) {
+constexpr void update_cycle(uint32_t& cycle, const array<const uint32_t, N>& cycles, size_t& cycles_i, int32_t& sum, const int32_t X) {
 	++cycle;
 	if(cycle == cycles[cycles_i]) {
 		sum += X * cycle;

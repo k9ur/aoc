@@ -27,14 +27,14 @@ struct Point {
 	Point(size_t _x, size_t _y) : x(_x), y(_y) {}
 };
 
-inline constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
+constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
 	if(!grid[y][x]) {
 		++visited;
 		grid[y][x] = true;
 	}
 }
 
-inline constexpr void update_axis(const size_t prev, size_t& current) {
+constexpr void update_axis(const size_t prev, size_t& current) {
 	if(prev > current)
 		++current;
 	else if(prev < current)
@@ -47,7 +47,10 @@ struct Instruction {
 
 	static constexpr size_t length = 10;
 
-	Instruction(uint32_t _moves, uint8_t _dir) : moves(_moves), dir(_dir) {}
+	Instruction(uint32_t _moves, uint8_t _dir)
+	  : moves(_moves)
+	  , dir(_dir)
+	{}
 
 	void execute(array<Point, length>& chain, vector<vector<bool>>& grid, uint32_t& visited) const noexcept {
 		static Point& head = chain.front(),

@@ -30,7 +30,7 @@ T process_num(const string_view& view, string_view::size_type& ind) {
 	return svto<T>(view.substr(old_ind, ind - old_ind));
 }
 
-inline constexpr void conv_to_list(string& str, string_view& str_view, string_view::size_type& ind) {
+constexpr void conv_to_list(string& str, string_view& str_view, string_view::size_type& ind) {
 	str.insert(ind, 1, list_close);
 	str_view = str;
 	do

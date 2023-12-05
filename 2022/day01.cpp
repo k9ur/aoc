@@ -4,7 +4,7 @@
 
 using namespace std;
 
-inline constexpr void update(uint32_t& cal, uint32_t& max_cal) {
+constexpr void update(uint32_t& cal, uint32_t& max_cal) {
 	if(cal > max_cal)
 		max_cal = cal;
 	cal = 0;
