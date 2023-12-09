@@ -87,8 +87,8 @@ int main(void)
 			assert(size = line.size());
 	}
 
-	const size_t cols = size,
-	             rows = schematic.size();
+	const auto cols = size,
+	           rows = schematic.size();
 
 	size_t col, row;
 	for(row = 0; row != rows; ++row)

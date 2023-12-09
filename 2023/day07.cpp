@@ -63,8 +63,8 @@ int main(void)
 	}
 
 	sort(hands.begin(), hands.end(), [](const auto& a, const auto& b) {
-		const auto& a_cards = get<0>(a),
-		            b_cards = get<0>(b);
+		const auto& a_cards = a.first,
+		            b_cards = b.first;
 		const auto a_type = hand_type(a_cards),
 		           b_type = hand_type(b_cards);
 		if(a_type != b_type)
@@ -77,7 +77,7 @@ int main(void)
 
 	size_t i = 0;
 	for(const auto& hand : hands)
-		winnings += get<1>(hand) * ++i;
+		winnings += hand.second * ++i;
 
 	cout << winnings << '\n';
 	return 0;

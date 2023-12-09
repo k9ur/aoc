@@ -10,9 +10,9 @@ using namespace std;
 int main(void)
 {
 	vector<uint32_t> times;
+	string line;
 	uint64_t ways = 1;
 	uint32_t num;
-	string line;
 
 	getline(cin, line);
 	istringstream iss(line.substr(10));

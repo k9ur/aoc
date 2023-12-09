@@ -1,58 +1,38 @@
 #include <iostream>
 #include <string>
-#include <string_view>
+#include <sstream>
 #include <array>
-#include <charconv>
-#include <concepts>
+#include <limits>
 #include <cstdint>
-#include <cassert>
 
 using namespace std;
-
-template<integral T, int base = 10>
-T svto(const string_view& sv)
-{
-	T val;
-	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
-	assert(ec == errc());
-	return val;
-}
 
 int main(void)
 {
 	constexpr array<const uint32_t, 3> limits = { 12, 13, 14 }; // r g b order
-	uint32_t ID_sum = 0;
 	string line;
-	string_view line_view;
+	uint32_t ID = 1,
+	         ID_sum = 0;
 
 	while(getline(cin, line)) {
-		string_view::size_type i;
-		line_view = line;
-
-		for(i = 6; line_view[i] != ':'; ++i);
-		const auto ID = svto<uint32_t>(line_view.substr(5, i - 5));
-		i += 2;
-
+		string colour;
+		uint32_t count;
 		bool poss = true;
-		do {
-			const auto old_i = i;
-			do
-				++i;
-			while(line_view[i] != ' ');
-			const auto count = svto<uint32_t>(line_view.substr(old_i, i - old_i));
-			const auto first_l = line_view[++i];
+		istringstream iss(line);
+		iss.ignore(numeric_limits<streamsize>::max(), ':');
+	
+		while(iss >> count >> colour) {
+			const auto first_l = colour[0];
 			const size_t lim_i = first_l == 'r' ? 0 : first_l == 'g' ? 1 : 2;
 			if(count > limits[lim_i]) {
 				poss = false;
 				break;
 			}
-			i += 4;
-			while(i < line_view.size() && line_view[i] != ' ')
-				++i;
-		} while(++i < line_view.size());
+		}
 
 		if(poss)
 			ID_sum += ID;
+		++ID;
 	}
 
 	cout << ID_sum << '\n';

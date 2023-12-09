@@ -10,10 +10,10 @@ using namespace std;
 int main(void)
 {
 	constexpr array<const string_view, 9> words = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
-	uint32_t num_sum = 0;
 	string line;
 	string_view line_view;
 	string::size_type i;
+	uint32_t num_sum = 0;
 
 	while(getline(cin, line)) {
 		line_view = line;

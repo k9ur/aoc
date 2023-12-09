@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 
 using namespace std;
@@ -42,6 +43,7 @@ int main(void)
 	}
 
 	const auto min_loc = min_element(vals.cbegin(), vals.cend());
+	assert(min_loc != vals.cend());
 	cout << *min_loc << '\n';
 	return 0;
 }

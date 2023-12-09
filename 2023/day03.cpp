@@ -72,8 +72,8 @@ int main(void)
 			assert(size = line.size());
 	}
 
-	const size_t cols = size,
-	             rows = schematic.size();
+	const auto cols = size,
+	           rows = schematic.size();
 
 	for(size_t col, row = 0; row != rows; ++row) {
 		const string_view sv = schematic[row];

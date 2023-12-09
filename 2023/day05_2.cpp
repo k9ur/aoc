@@ -5,6 +5,7 @@
 #include <sstream>
 #include <utility>
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 
 using namespace std;
@@ -72,6 +73,7 @@ int main(void)
 	const auto min_loc = min_element(ranges.cbegin(), ranges.cend(), [](const auto& a, const auto& b) {
 		return get<0>(a) < get<0>(b);
 	});
+	assert(min_loc != ranges.cend());
 	cout << get<0>(*min_loc) << '\n';
 	return 0;
 }

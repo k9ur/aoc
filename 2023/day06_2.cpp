@@ -18,10 +18,10 @@ constexpr uint64_t concat_ints(const T1 x, const T2 y)
 
 int main(void)
 {
+	string line;
 	uint64_t t = 0,
 	         d = 0;
 	uint32_t num;
-	string line;
 
 	getline(cin, line);
 	istringstream iss(line.substr(10));

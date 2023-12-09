@@ -7,8 +7,8 @@ using namespace std;
 
 int main(void)
 {
-	uint32_t num_sum = 0;
 	string line;
+	uint32_t num_sum = 0;
 
 	while(getline(cin, line)) {
 		for(auto i = line.cbegin(); i != line.cend(); ++i)

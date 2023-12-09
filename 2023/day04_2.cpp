@@ -1,10 +1,13 @@
 #include <iostream>
+#include <ios>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <algorithm>
 #include <numeric>
 #include <iterator>
+#include <limits>
+#include <execution>
 #include <cstdint>
 #include <cctype>
 
@@ -15,24 +18,17 @@ int main(void)
 	vector<uint32_t> needed, count;
 	string line;
 	size_t c_i = 0;
-	string::size_type i, bar_idx = 0;
 
 	while(getline(cin, line)) {
 		size_t matches = 0;
-
-		if(!bar_idx)
-			bar_idx = line.find_first_of('|');
-		else
-			assert(line[bar_idx] == '|');
-		for(i = 6; line[i] != ':'; ++i);
-		i += 2;
-
 		uint32_t num;
-		istringstream iss(line.substr(i));
+		istringstream iss(line);
+		iss.ignore(numeric_limits<streamsize>::max(), ':');
 		while(iss >> num)
 			needed.push_back(num);
 
-		iss = istringstream(line.substr(bar_idx + 1));
+		iss = istringstream(line);
+		iss.ignore(numeric_limits<streamsize>::max(), '|');
 		while(iss >> num)
 			if(find(needed.cbegin(), needed.cend(), num) != needed.cend())
 				++matches;
@@ -48,7 +44,7 @@ int main(void)
 		++c_i;
 	}
 
-	cout << accumulate(count.cbegin(), next(count.cbegin(), c_i), 0) << '\n';
+	cout << reduce(execution::par_unseq, next(count.cbegin()), next(count.cbegin(), c_i), count.front()) << '\n';
 	return 0;
 }
 
