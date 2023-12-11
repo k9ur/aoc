@@ -6,8 +6,9 @@
 
 using namespace std;
 
-constexpr uint32_t get_score(const vector<string>& trees, const size_t r, const size_t c, const size_t rows, const size_t cols) {
-	const char val = trees[r][c];
+constexpr uint32_t get_score(const vector<string>& trees, const size_t r, const size_t c, const size_t rows, const size_t cols)
+{
+	const auto val = trees[r][c];
 	size_t y, x;
 
 	for(y = r - 1; y && trees[y][c] < val; --y);
@@ -22,7 +23,8 @@ constexpr uint32_t get_score(const vector<string>& trees, const size_t r, const 
 	return score;
 }
 
-int main(void) {
+int main(void)
+{
 	vector<string> trees;
 	string line;
 	string::size_type size = 0;
@@ -35,13 +37,13 @@ int main(void) {
 			assert(size = line.size());
 	}
 
-	const size_t cols = size,
-	             rows = trees.size();
+	const auto cols = size,
+	           rows = trees.size();
 	uint32_t max_score = 0;
 
 	for(size_t r = 1; r < rows - 1; ++r) // Ignore outer trees since they'll have a score of 0
 		for(size_t c = 1; c < cols - 1; ++c) {
-			const uint32_t score = get_score(trees, r, c, rows, cols);
+			const auto score = get_score(trees, r, c, rows, cols);
 			if(score > max_score)
 				max_score = score;
 		}
@@ -49,3 +51,4 @@ int main(void) {
 	cout << max_score << '\n';
 	return 0;
 }
+

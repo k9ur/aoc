@@ -8,7 +8,8 @@
 
 using namespace std;
 
-struct Dir {
+struct Dir
+{
 	vector<unique_ptr<Dir>> sub_dirs;
 	Dir* const parent_dir = nullptr;
 	const string name;
@@ -16,14 +17,15 @@ struct Dir {
 
 	static constexpr uint32_t max_size = 100'000;
 
-	Dir() : name("/") {}
-	Dir(Dir& _parent_dir, string&& _name)
+	constexpr Dir() : name("/") {}
+	constexpr Dir(Dir& _parent_dir, string&& _name)
 	  : parent_dir(&_parent_dir)
 	  , name(move(_name))
 	{}
 
-	constexpr void dfs_update(uint32_t& sum) noexcept {
-		for(unique_ptr<Dir>& sub_dir : sub_dirs)
+	constexpr void dfs_update(uint32_t& sum) noexcept
+	{
+		for(auto& sub_dir : sub_dirs)
 			sub_dir->dfs_update(sum);
 
 		if(parent_dir != nullptr)
@@ -33,10 +35,11 @@ struct Dir {
 	}
 };
 
-int main(void) {
-	string line;
+int main(void)
+{
 	Dir root;
 	Dir* cur_dir = nullptr;
+	string line;
 
 	while(getline(cin, line)) {
 		if(line[0] == '$') { // Command
@@ -48,8 +51,8 @@ int main(void) {
 				} else if(line[5] == '/') // Root
 					cur_dir = &root;
 				else {
-					const string_view new_dir_name = string_view(line).substr(5);
-					for(unique_ptr<Dir>& sub_dir : cur_dir->sub_dirs)
+					const auto new_dir_name = string_view(line).substr(5);
+					for(auto& sub_dir : cur_dir->sub_dirs)
 						if(sub_dir->name == new_dir_name) {
 							cur_dir = sub_dir.get();
 							goto repeat;
@@ -72,3 +75,4 @@ repeat:
 	cout << sum << '\n';
 	return 0;
 }
+

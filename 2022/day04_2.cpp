@@ -4,7 +4,8 @@
 
 using namespace std;
 
-int main(void) {
+int main(void)
+{
 	uint32_t a_lower, a_upper, b_lower, b_upper, count = 0;
 
 	while(!cin.eof()) {
@@ -24,3 +25,4 @@ int main(void) {
 	cout << count << '\n';
 	return 0;
 }
+

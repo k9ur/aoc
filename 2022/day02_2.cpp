@@ -4,9 +4,10 @@
 
 using namespace std;
 
-int main(void) {
-	uint32_t score = 0;
+int main(void)
+{
 	string line;
+	uint32_t score = 0;
 
 	while(getline(cin, line)) {
 		if(line == "A X")
@@ -34,3 +35,4 @@ int main(void) {
 	cout << score << '\n';
 	return 0;
 }
+

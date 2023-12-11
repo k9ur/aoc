@@ -11,7 +11,8 @@ using namespace std;
 constexpr char start_c = 'S',
                end_c = 'E';
 
-bool bfs_queue_add(queue<size_t>& q, const string& grid, vector<bool>& visited, const size_t pos, const char max_height) {
+bool bfs_queue_add(queue<size_t>& q, const string& grid, vector<bool>& visited, const size_t pos, const char max_height)
+{
 	if(!visited[pos]) {
 		if(grid[pos] == end_c) [[unlikely]]
 			return max_height >= 'z';
@@ -23,7 +24,8 @@ bool bfs_queue_add(queue<size_t>& q, const string& grid, vector<bool>& visited, 
 	return false;
 }
 
-int main(void) {
+int main(void)
+{
 	string grid, line;
 	string::size_type size = 0;
 
@@ -38,15 +40,15 @@ int main(void) {
 	vector<bool> visited(grid.size());
 	queue<size_t> q;
 
-	const string::size_type start_pos = grid.find(start_c);
+	const auto start_pos = grid.find(start_c);
 	assert(start_pos != string::npos);
 	q.push(start_pos);
 	visited[start_pos] = true;
 
 	uint32_t steps = 1;
-	size_t step_incr = q.back();
+	auto step_incr = q.back();
 	do { // bfs
-		const size_t pos = q.front();
+		const auto pos = q.front();
 		const char max_height = (grid[pos] == start_c ? 'a' : grid[pos]) + 1;
 
 		if(pos % size) // Left
@@ -72,3 +74,4 @@ int main(void) {
 	cout << steps << '\n';
 	return 0;
 }
+

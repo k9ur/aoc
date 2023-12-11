@@ -12,14 +12,16 @@
 using namespace std;
 
 template<integral T, int base = 10>
-T svto(const string_view& sv) {
+T svto(const string_view& sv)
+{
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
 	return val;
 }
 
-int main(void) {
+int main(void)
+{
 	vector<string> pos;
 	string line, msg;
 	string_view line_view;
@@ -35,7 +37,7 @@ int main(void) {
 			if(line[i] == '[')
 				pos[i / 4].push_back(line[i + 1]);
 	}
-	for(string& s : pos)
+	for(auto& s : pos)
 		reverse(s.begin(), s.end());
 	
 	while(getline(cin, line)) { // Move
@@ -43,12 +45,12 @@ int main(void) {
 		line_view = line;
 
 		for(i = 6; line_view[i] != ' '; ++i);
-		const size_t count = svto<size_t>(line_view.substr(5, i - 5));
-		const string_view::size_type old_i = i + 6;
+		const auto count = svto<size_t>(line_view.substr(5, i - 5));
+		const auto old_i = i + 6;
 
 		for(i += 7; line_view[i] != ' '; ++i);
-		const size_t from = svto<size_t>(line_view.substr(old_i, i - old_i)) - 1,
-		               to = svto<size_t>(line_view.substr(i + 4, line_view.size() - i - 3)) - 1;
+		const auto from = svto<size_t>(line_view.substr(old_i, i - old_i)) - 1,
+		             to = svto<size_t>(line_view.substr(i + 4, line_view.size() - i - 3)) - 1;
 
 		assert(pos[from].size() >= count);
 #if 0
@@ -62,9 +64,10 @@ int main(void) {
 		pos[from].erase(pos[from].size() - count);
 	}
 
-	for(const string& s : pos)
+	for(const auto& s : pos)
 		msg.push_back(s.back());
 
 	cout << msg << '\n';
 	return 0;
 }
+

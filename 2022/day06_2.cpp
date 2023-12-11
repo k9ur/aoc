@@ -5,23 +5,15 @@
 
 using namespace std;
 
-int main(void) {
+int main(void)
+{
 	constexpr string::size_type size = 14;
+	string line;
 	string::size_type ind = 0;
 	uint32_t bits;
-	string line;
 
 	cin >> line;
 	assert(line.size() >= size);
-#if 0
-	do {
-		bits = 0;
-		for(string::size_type i = 0; i < size; ++i)
-			bits |= 1 << (line[i + ind] - 'a');
-		assert(++ind <= line.size());
-	} while(__builtin_popcount(bits) != 4);
-	--ind;
-#else
 	char c;
 
 repeat:
@@ -34,8 +26,8 @@ repeat:
 		} else
 			bits |= 1 << c;
 	}
-#endif
 
 	cout << ind + size << '\n';
 	return 0;
 }
+

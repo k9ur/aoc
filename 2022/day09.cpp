@@ -2,6 +2,7 @@
 #include <cassert>
 #include <string>
 #include <string_view>
+#include <algorithm>
 #include <charconv>
 #include <concepts>
 #include <vector>
@@ -11,30 +12,34 @@
 using namespace std;
 
 template<integral T, int base = 10>
-T svto(const string_view& sv) {
+T svto(const string_view& sv)
+{
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
 	return val;
 }
 
-constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
-	if(!grid[y][x]) {
+constexpr void set_cell(vector<bool>::reference&& cell, uint32_t& visited)
+{
+	if(!cell) {
 		++visited;
-		grid[y][x] = true;
+		cell = true;
 	}
 }
 
-struct Instruction {
+struct Instruction
+{
 	const uint32_t moves;
 	const uint8_t dir : 2;
 
-	Instruction(uint32_t _moves, uint8_t _dir)
+	constexpr Instruction(uint32_t _moves, uint8_t _dir)
 	  : moves(_moves)
 	  , dir(_dir)
 	{}
 
-	void constexpr execute(vector<vector<bool>>& grid, uint32_t& visited, const bool x, size_t& T_axis, size_t& T_other, size_t& H_axis, const size_t& H_other) const noexcept {
+	void constexpr execute(vector<vector<bool>>& grid, uint32_t& visited, const bool x, size_t& T_axis, size_t& T_other, size_t& H_axis, const size_t& H_other) const noexcept
+	{
 		uint32_t moved = 0;
 		while(T_other != H_other && moved < moves) {
 			++moved;
@@ -42,43 +47,38 @@ struct Instruction {
 			if(abs(static_cast<int32_t>(H_axis) - static_cast<int32_t>(T_axis)) == 2) {
 				T_other = H_other;
 				T_axis = dir & 2 ? H_axis + 1 : H_axis - 1;
-				set_cell(grid, visited, x ? T_axis : T_other, x ? T_other : T_axis);
+				set_cell(grid[x ? T_other : T_axis][x ? T_axis : T_other], visited);
 				break;
 			}
 		}
 		dir & 2 ? H_axis -= moves - moved : H_axis += moves - moved;
 		while(dir & 2 ? T_axis > H_axis + 1 : T_axis < H_axis - 1) {
-			set_cell(grid, visited, x ? T_axis : T_other, x ? T_other : T_axis);
+			set_cell(grid[x ? T_other : T_axis][x ? T_axis : T_other], visited);
 			dir & 2 ? --T_axis : ++T_axis;
 		}
 	}
 };
 
-void add_instruction(vector<unique_ptr<Instruction>>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
+void add_instruction(vector<unique_ptr<Instruction>>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir)
+{
 	if(dir & 2) {
 		xy -= num;
-		if(xy < maxmin_xy)
-			maxmin_xy = xy;
+		maxmin_xy = min(maxmin_xy, xy);
 	} else {
 		xy += num;
-		if(xy > maxmin_xy)
-			maxmin_xy = xy;
+		maxmin_xy = max(maxmin_xy, xy);
 	}
 	instructions.push_back(make_unique<Instruction>(num, dir));
 }
 
-int main(void) {
+int main(void)
+{
 	vector<unique_ptr<Instruction>> instructions;
 	string line;
 
-	int32_t x = 0,
-	        y = 0;
-	int32_t max_x = 0,
-	        min_x = 0,
-	        max_y = 0,
-	        min_y = 0;
+	int32_t x{}, y{}, max_x{}, min_x{}, max_y{}, min_y{};
 	while(getline(cin, line)) {
-		const uint32_t num = svto<uint32_t>(string_view(line).substr(2));
+		const auto num = svto<uint32_t>(string_view(line).substr(2));
 		if(!num)
 			continue;
 		switch(line[0]) {
@@ -104,18 +104,19 @@ int main(void) {
 	       T_x = H_x,
 	       T_y = H_y;
 	vector<vector<bool>> grid(max_y - min_y + 1);
-	for(vector<bool>& row : grid)
+	for(auto& row : grid)
 		row.resize(max_x - min_x + 1);
 
 	uint32_t visited = 0;
-	for(unique_ptr<Instruction>& ins : instructions) {
+	for(const auto& ins : instructions) {
 		if(ins->dir & 1) // y-axis
-			ins->execute(grid, visited, 0, T_y, T_x, H_y, H_x);
+			ins->execute(grid, visited, false, T_y, T_x, H_y, H_x);
 		else // x-axis
-			ins->execute(grid, visited, 1, T_x, T_y, H_x, H_y);
-		set_cell(grid, visited, T_x, T_y);
+			ins->execute(grid, visited, true, T_x, T_y, H_x, H_y);
+		set_cell(grid[T_y][T_x], visited);
 	}
 
 	cout << visited << '\n';
 	return 0;
 }
+

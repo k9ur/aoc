@@ -10,7 +10,8 @@
 using namespace std;
 
 template<integral T, int base = 10>
-T svto(const string_view& sv) {
+T svto(const string_view& sv)
+{
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
@@ -18,7 +19,8 @@ T svto(const string_view& sv) {
 }
 
 template<size_t N>
-constexpr void update_cycle(uint32_t& cycle, const array<const uint32_t, N>& cycles, size_t& cycles_i, int32_t& sum, const int32_t X) {
+constexpr void update_cycle(uint32_t& cycle, const array<const uint32_t, N>& cycles, size_t& cycles_i, int32_t& sum, const int32_t X)
+{
 	++cycle;
 	if(cycle == cycles[cycles_i]) {
 		sum += X * cycle;
@@ -26,14 +28,14 @@ constexpr void update_cycle(uint32_t& cycle, const array<const uint32_t, N>& cyc
 	}
 }
 
-int main(void) {
+int main(void)
+{
 	constexpr array<const uint32_t, 6> cycles = { 20, 60, 100, 140, 180, 220 };
+	string line;
 	size_t cycles_i = 0;
 	uint32_t cycle = 0;
-	int32_t sum = 0,
-	        X = 1;
+	int32_t sum{}, X = 1;
 
-	string line;
 	while(getline(cin, line)) {
 		if(cycles_i == cycles.size()) // Continue to take input but ignore it
 			continue;
@@ -50,3 +52,4 @@ int main(void) {
 	cout << sum << '\n';
 	return 0;
 }
+

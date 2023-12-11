@@ -6,104 +6,99 @@
 #include <concepts>
 #include <vector>
 #include <array>
+#include <utility>
 #include <memory>
 #include <cstdint>
 
 using namespace std;
 
+using point_t = pair<size_t, size_t>;
+
 template<integral T, int base = 10>
-T svto(const string_view& sv) {
+T svto(const string_view& sv)
+{
 	T val;
 	[[maybe_unused]] const errc ec = from_chars(sv.cbegin(), sv.cend(), val, base).ec;
 	assert(ec == errc());
 	return val;
 }
 
-struct Point {
-	size_t x;
-	size_t y;
-
-	Point() {}
-	Point(size_t _x, size_t _y) : x(_x), y(_y) {}
-};
-
-constexpr void set_cell(vector<vector<bool>>& grid, uint32_t& visited, const size_t x, const size_t y) {
-	if(!grid[y][x]) {
+constexpr void set_cell(vector<bool>::reference&& cell, uint32_t& visited)
+{
+	if(!cell) {
 		++visited;
-		grid[y][x] = true;
+		cell = true;
 	}
 }
 
-constexpr void update_axis(const size_t prev, size_t& current) {
+constexpr void update_axis(const size_t prev, size_t& current)
+{
 	if(prev > current)
 		++current;
 	else if(prev < current)
 		--current;
 }
 
-struct Instruction {
+struct Instruction
+{
 	const uint32_t moves;
 	const uint8_t dir : 2;
 
 	static constexpr size_t length = 10;
 
-	Instruction(uint32_t _moves, uint8_t _dir)
+	constexpr Instruction(uint32_t _moves, uint8_t _dir)
 	  : moves(_moves)
 	  , dir(_dir)
 	{}
 
-	void execute(array<Point, length>& chain, vector<vector<bool>>& grid, uint32_t& visited) const noexcept {
-		static Point& head = chain.front(),
-	                  &tail = chain.back();
+	void execute(array<point_t, length>& chain, vector<vector<bool>>& grid, uint32_t& visited) const noexcept
+	{
+		static auto& head = chain.front();
+		static auto& tail = chain.back();
 		for(uint32_t m = 0; m != moves; ++m) {
 			if(dir & 1) // y-axis
-				dir & 2 ? --head.y : ++head.y;
+				dir & 2 ? --head.second : ++head.second;
 			else // x-axis
-				dir & 2 ? --head.x : ++head.x;
+				dir & 2 ? --head.first : ++head.first;
 
 			size_t i;
 			for(i = 1; i != length; ++i) {
-				Point& current = chain[i];
-				const Point& prev = chain[i - 1];
+				auto& current = chain[i];
+				const auto& prev = chain[i - 1];
 
-				if(abs(static_cast<int32_t>(current.x) - static_cast<int32_t>(prev.x)) == 2
-					|| abs(static_cast<int32_t>(current.y) - static_cast<int32_t>(prev.y)) == 2) {
-					update_axis(prev.x, current.x);
-					update_axis(prev.y, current.y);
+				if(abs(static_cast<int32_t>(current.first) - static_cast<int32_t>(prev.first)) == 2
+					|| abs(static_cast<int32_t>(current.second) - static_cast<int32_t>(prev.second)) == 2) {
+					update_axis(prev.first, current.first);
+					update_axis(prev.second, current.second);
 				} else
 					break;
 			}
 			if(i == length) // Tail moved
-				set_cell(grid, visited, tail.x, tail.y);
+				set_cell(grid[tail.second][tail.first], visited);
 		}
 	}
 };
 
-void add_instruction(vector<unique_ptr<Instruction>>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir) {
+void add_instruction(vector<unique_ptr<Instruction>>& instructions, int32_t& xy, int32_t& maxmin_xy, const uint32_t num, const uint8_t dir)
+{
 	if(dir & 2) {
 		xy -= num;
-		if(xy < maxmin_xy)
-			maxmin_xy = xy;
+		maxmin_xy = min(maxmin_xy, xy);
 	} else {
 		xy += num;
-		if(xy > maxmin_xy)
-			maxmin_xy = xy;
+		maxmin_xy = max(maxmin_xy, xy);
 	}
 	instructions.push_back(make_unique<Instruction>(num, dir));
 }
 
-int main(void) {
+int main(void)
+{
 	vector<unique_ptr<Instruction>> instructions;
 	string line;
 
-	int32_t x = 0,
-	        y = 0;
-	int32_t max_x = 0,
-	        min_x = 0,
-	        max_y = 0,
-	        min_y = 0;
+	int32_t x{}, y{}, max_x{}, min_x{}, max_y{}, min_y{};
 	while(getline(cin, line)) {
-		const uint32_t num = svto<uint32_t>(string_view(line).substr(2));
+		const auto num = svto<uint32_t>(string_view(line).substr(2));
 		if(!num)
 			continue;
 		switch(line[0]) {
@@ -125,17 +120,18 @@ int main(void) {
 	}
 
 	vector<vector<bool>> grid(max_y - min_y + 1);
-	for(vector<bool>& row : grid)
+	for(auto& row : grid)
 		row.resize(max_x - min_x + 1);
 	grid[-min_y][-min_x] = true;
 
 	uint32_t visited = 1;
-	array<Point, Instruction::length> chain;
-	chain.fill(Point(-min_x, -min_y));
+	array<point_t, Instruction::length> chain;
+	chain.fill({ -min_x, -min_y });
 
-	for(unique_ptr<Instruction>& ins : instructions)
+	for(const auto& ins : instructions)
 		ins->execute(chain, grid, visited);
 
 	cout << visited << '\n';
 	return 0;
 }
+

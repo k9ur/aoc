@@ -3,12 +3,14 @@
 #include <numeric>
 #include <algorithm>
 #include <array>
+#include <execution>
 #include <cstdint>
 
 using namespace std;
 
 template<size_t N>
-void update(uint32_t& cal, array<uint32_t, N>& max_cals) {
+void update(uint32_t& cal, array<uint32_t, N>& max_cals)
+{
 	size_t i;
 	for(i = N; i; --i)
 		if(cal <= max_cals[i - 1])
@@ -20,11 +22,12 @@ void update(uint32_t& cal, array<uint32_t, N>& max_cals) {
 	cal = 0;
 }
 
-int main(void) {
+int main(void)
+{
 	constexpr size_t size = 3;
-	uint32_t cal = 0;
-	array<uint32_t, size> max_cals = { 0 };
 	string line;
+	array<uint32_t, size> max_cals = { 0 };
+	uint32_t cal = 0;
 
 	while(getline(cin, line)) {
 		if(line.empty())
@@ -34,6 +37,7 @@ int main(void) {
 	}
 	update(cal, max_cals);
 
-	cout << reduce(max_cals.cbegin(), max_cals.cend(), 0) << '\n';
+	cout << reduce(execution::par_unseq, max_cals.cbegin(), max_cals.cend()) << '\n';
 	return 0;
 }
+
