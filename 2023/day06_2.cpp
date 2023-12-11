@@ -7,20 +7,22 @@
 
 using namespace std;
 
-template<unsigned_integral T1, unsigned_integral T2>
+#ifdef gnu
+[[using gnu : const]]
+#endif
+template<unsigned_integral T1, unsigned_integral T2, unsigned base = 10>
 constexpr uint64_t concat_ints(const T1 x, const T2 y)
 {
-    uint64_t pow = 10;
+    uint64_t pow = base;
     while(y >= pow)
-        pow *= 10;
-    return pow * x + y;        
+        pow *= base;
+    return pow * x + y;
 }
 
 int main(void)
 {
 	string line;
-	uint64_t t = 0,
-	         d = 0;
+	uint64_t t{}, d{};
 	uint32_t num;
 
 	getline(cin, line);

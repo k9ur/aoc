@@ -29,7 +29,7 @@ constexpr bool is_symbol(const char c)
 
 bool symbol_in_surroundings(const vector<string>& schem, const size_t row, const size_t start, const size_t end)
 {
-	const auto cols = schem[0].size(),
+	const auto cols = schem.front().size(),
 	           rows = schem.size();
 	if(start && is_symbol(schem[row][start - 1]))
 		return true;
@@ -75,8 +75,7 @@ int main(void)
 	const auto cols = size,
 	           rows = schematic.size();
 
-	for(size_t col, row = 0; row != rows; ++row) {
-		const string_view sv = schematic[row];
+	for(size_t col, row = 0; const string_view sv : schematic) {
 		for(col = 0; col < cols; ++col)
 			if(isdigit(sv[col])) {
 				string::size_type start_col = col;
@@ -86,6 +85,7 @@ int main(void)
 				if(symbol_in_surroundings(schematic, row, start_col, col))
 					part_sum += svto<uint32_t>(sv.substr(start_col, col - start_col));
 			}
+		++row;
 	}
 
 	cout << part_sum << '\n';

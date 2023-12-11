@@ -3,6 +3,9 @@
 #include <sstream>
 #include <array>
 #include <algorithm>
+#include <functional>
+#include <iterator>
+#include <execution>
 #include <limits>
 #include <cstdint>
 
@@ -26,7 +29,7 @@ int main(void)
 			min_needed[arr_i] = max(min_needed[arr_i], count);
 		}
 
-		pow_sum += min_needed[0] * min_needed[1] * min_needed[2];
+		pow_sum += reduce(execution::par_unseq, next(min_needed.cbegin()), min_needed.cend(), min_needed.front(), multiplies());
 		min_needed.fill(0);
 	}
 

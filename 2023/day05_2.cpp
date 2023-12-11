@@ -12,7 +12,7 @@ using namespace std;
 
 int main(void)
 {
-	vector<tuple<uint64_t, uint64_t>> ranges, new_ranges; // [start, end)
+	vector<pair<uint64_t, uint64_t>> ranges, new_ranges; // [start, end)
 	vector<tuple<uint64_t, uint64_t, uint64_t>> mappings; // dest, [start, end)
 	string line;
 
@@ -71,10 +71,10 @@ int main(void)
 	}
 
 	const auto min_loc = min_element(ranges.cbegin(), ranges.cend(), [](const auto& a, const auto& b) {
-		return get<0>(a) < get<0>(b);
+		return a.first < b.first;
 	});
 	assert(min_loc != ranges.cend());
-	cout << get<0>(*min_loc) << '\n';
+	cout << (*min_loc).first << '\n';
 	return 0;
 }
 

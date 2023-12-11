@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <ranges>
 #include <array>
 #include <cstdint>
 #include <cctype>
@@ -12,36 +13,41 @@ int main(void)
 	constexpr array<const string_view, 9> words = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 	string line;
 	string_view line_view;
-	string::size_type i;
+	string::size_type i, j;
 	uint32_t num_sum = 0;
 
 	while(getline(cin, line)) {
 		line_view = line;
-		for(i = 0; i != line_view.size(); ++i) {
-			if(isdigit(line_view[i])) {
-				num_sum += (line_view[i] - '0') * 10;
+		for(i = 0; const auto c : line_view) {
+			if(isdigit(c)) {
+				num_sum += (c - '0') * 10;
 				break;
 			} else
-				for(size_t j = 0; j != words.size(); ++j)
-					if(words[j] == line_view.substr(i, words[j].size())) {
-						num_sum += (j + 1) * 10;
+				for(j = 0; const auto& word : words) {
+					++j;
+					if(word == line_view.substr(i, word.size())) {
+						num_sum += j * 10;
 						goto db1; // double break
 					}
+				}
+			++i;
 		}
 db1:
-		for(i = line_view.size(); i; --i) {
-			if(isdigit(line_view[i - 1])) {
-				num_sum += line_view[i - 1] - '0';
+		for(i = line_view.size() - 1; const auto c : line_view | views::reverse) {
+			if(isdigit(c)) {
+				num_sum += c - '0';
 				break;
 			} else
-				for(size_t j = 0; j != words.size(); ++j) {
-					if(words[j].size() + i - 1 > line.size())
+				for(j = 0; const auto& word : words) {
+					++j;
+					if(word.size() + i > line.size())
 						continue;
-					else if(words[j] == line_view.substr(i - 1, words[j].size())) {
-						num_sum += j + 1;
+					else if(word == line_view.substr(i, word.size())) {
+						num_sum += j;
 						goto db2;
 					}
 				}
+			--i;
 		}
 db2:
 		;

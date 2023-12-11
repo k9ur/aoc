@@ -11,8 +11,7 @@ int main(void)
 {
 	constexpr array<const uint32_t, 3> limits = { 12, 13, 14 }; // r g b order
 	string line;
-	uint32_t ID = 1,
-	         ID_sum = 0;
+	uint32_t ID_sum{}, ID = 1;
 
 	while(getline(cin, line)) {
 		string colour;

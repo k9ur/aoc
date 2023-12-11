@@ -30,12 +30,14 @@ int main(void)
 			iss = istringstream(line);
 			iss >> dest >> src >> len;
 
-			for(auto val = vals.begin(); val != vals.end(); ++val)
-				if(!done_yet[val - vals.begin()] && *val >= src && *val < src + len) {
-					*val -= src;
-					*val += dest;
-					done_yet[val - vals.begin()] = true;
+			for(size_t idx = 0; auto& val : vals) {
+				if(!done_yet[idx] && val >= src && val < src + len) {
+					val -= src;
+					val += dest;
+					done_yet[idx] = true;
 				}
+				++idx;
+			}
 			getline(cin, line);
 		} while(!cin.eof() && !line.empty());
 

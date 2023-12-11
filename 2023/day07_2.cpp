@@ -81,8 +81,7 @@ int main(void)
 		return true;
 	});
 
-	size_t i = 0;
-	for(const auto& hand : hands)
+	for(size_t i = 0; const auto& hand : hands)
 		winnings += hand.second * ++i;
 
 	cout << winnings << '\n';
