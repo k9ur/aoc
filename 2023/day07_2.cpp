@@ -68,7 +68,7 @@ int main(void)
 		hands.emplace_back(cards, bet);
 	}
 
-	sort(hands.begin(), hands.end(), [](const auto& a, const auto& b) {
+	sort(hands.begin(), hands.end(), [](const auto& a, const auto& b) -> bool {
 		const auto& a_cards = a.first,
 		            b_cards = b.first;
 		const auto a_type = hand_type(a_cards),

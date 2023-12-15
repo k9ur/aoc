@@ -17,7 +17,6 @@ constexpr bool conn_d(const char c)
 {
 	return c == '|' || c == 'F' || c == '7';
 }
-
 #ifdef gnu
 [[using gnu : const]]
 #endif
@@ -25,7 +24,6 @@ constexpr bool conn_u(const char c)
 {
 	return c == '|' || c == 'J' || c == 'L';
 }
-
 #ifdef gnu
 [[using gnu : const]]
 #endif
@@ -33,7 +31,6 @@ constexpr bool conn_l(const char c)
 {
 	return c == '-' || c == 'J' || c == '7';
 }
-
 #ifdef gnu
 [[using gnu : const]]
 #endif
@@ -140,9 +137,7 @@ int main(void)
 	const auto& [ pathBr, pathBc ] = paths[1];
 	fix_start(grid, paths, start_r, start_c);
 
-	vector<vector<bool>> been_to(rows);
-	for(auto& row : been_to)
-		row.resize(cols, false);
+	vector<vector<bool>> been_to(rows, vector<bool>(cols, false));
 	been_to[start_r][start_c] = true;
 	been_to[pathAr][pathAc] = true;
 	been_to[pathBr][pathBc] = true;

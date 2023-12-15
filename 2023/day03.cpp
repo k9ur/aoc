@@ -72,16 +72,13 @@ int main(void)
 			assert(size = line.size());
 	}
 
-	const auto cols = size,
-	           rows = schematic.size();
-
 	for(size_t col, row = 0; const string_view sv : schematic) {
-		for(col = 0; col < cols; ++col)
+		for(col = 0; col < size; ++col)
 			if(isdigit(sv[col])) {
 				string::size_type start_col = col;
 				do
 					++col;
-				while(col < cols && isdigit(sv[col]));
+				while(col < size && isdigit(sv[col]));
 				if(symbol_in_surroundings(schematic, row, start_col, col))
 					part_sum += svto<uint32_t>(sv.substr(start_col, col - start_col));
 			}

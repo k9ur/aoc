@@ -103,9 +103,7 @@ int main(void)
 	       H_y = -min_y,
 	       T_x = H_x,
 	       T_y = H_y;
-	vector<vector<bool>> grid(max_y - min_y + 1);
-	for(auto& row : grid)
-		row.resize(max_x - min_x + 1);
+	vector<vector<bool>> grid(max_y - min_y + 1, vector<bool>(max_x - min_x + 1, false));
 
 	uint32_t visited = 0;
 	for(const auto& ins : instructions) {

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <utility>
 #include <iterator>
+#include <execution>
 #include <memory>
 #include <cstdint>
 
@@ -39,8 +40,8 @@ struct Monkey
 	  , ind_if_t(_ind_if_t)
 	  , ind_if_f(_ind_if_f)
 	  , divisor(_divisor)
-	  , op(_op)
 	  , op_val(_op_val)
+	  , op(_op)
 	{}
 
 	constexpr void add_inspections(void) noexcept
@@ -82,7 +83,7 @@ int main(void)
 		}
 
 		getline(cin, line);
-		uint8_t op, op_val;
+		uint8_t op, op_val{};
 		if(line[23] == '*') {
 			if(line[25] == 'o')
 				op = 3;
@@ -107,8 +108,8 @@ int main(void)
 		monkeys.push_back(make_unique<Monkey>(items, ind_if_t, ind_if_f, divisor, op, op_val));
 	}
 
-	const auto total_divisor = accumulate(next(monkeys.cbegin()), monkeys.cend(), static_cast<uint64_t>(monkeys.front()->divisor), [](const uint64_t a, const unique_ptr<Monkey>& b) {
-		return lcm(a, b->divisor);
+	const auto total_divisor = transform_reduce(execution::par_unseq, next(monkeys.cbegin()), monkeys.cend(), static_cast<uint64_t>(monkeys.front()->divisor), lcm<uint64_t, uint64_t>, [](const unique_ptr<Monkey>& b) {
+		return b->divisor;
 	});
 
 	for(uint16_t r = 0; r != rounds; ++r)

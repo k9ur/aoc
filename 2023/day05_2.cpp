@@ -70,7 +70,7 @@ int main(void)
 		new_ranges.clear();
 	}
 
-	const auto min_loc = min_element(ranges.cbegin(), ranges.cend(), [](const auto& a, const auto& b) {
+	const auto min_loc = min_element(ranges.cbegin(), ranges.cend(), [](const auto& a, const auto& b) -> auto {
 		return a.first < b.first;
 	});
 	assert(min_loc != ranges.cend());

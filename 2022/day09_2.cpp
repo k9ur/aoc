@@ -119,9 +119,7 @@ int main(void)
 		}
 	}
 
-	vector<vector<bool>> grid(max_y - min_y + 1);
-	for(auto& row : grid)
-		row.resize(max_x - min_x + 1);
+	vector<vector<bool>> grid(max_y - min_y + 1, vector<bool>(max_x - min_x + 1, false));
 	grid[-min_y][-min_x] = true;
 
 	uint32_t visited = 1;

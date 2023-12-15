@@ -37,8 +37,8 @@ struct Monkey
 	  , ind_if_t(_ind_if_t)
 	  , ind_if_f(_ind_if_f)
 	  , divisor(_divisor)
-	  , op(_op)
 	  , op_val(_op_val)
+	  , op(_op)
 	{}
 
 	constexpr void add_inspections(void) noexcept
@@ -80,7 +80,7 @@ int main(void)
 		}
 
 		getline(cin, line);
-		uint8_t op, op_val;
+		uint8_t op, op_val{};
 		if(line[23] == '*') {
 			if(line[25] == 'o')
 				op = 3;

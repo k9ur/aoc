@@ -64,9 +64,7 @@ int main(void)
 
 	const auto sand_enter_x = sand_drop_x - min_x,
 	           cols = max_x - min_x + 1;
-	vector<vector<cell_t>> grid(max_y + 1);
-	for(auto& row : grid)
-		row.resize(cols, AIR);
+	vector<vector<cell_t>> grid(max_y + 1, vector<cell_t>(cols, AIR));
 
 	for(auto& path : paths) { // Draw each path
 		auto& prev = path.front();

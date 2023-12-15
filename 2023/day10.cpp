@@ -17,7 +17,6 @@ constexpr bool conn_d(const char c)
 {
 	return c == '|' || c == 'F' || c == '7';
 }
-
 #ifdef gnu
 [[using gnu : const]]
 #endif
@@ -25,7 +24,6 @@ constexpr bool conn_u(const char c)
 {
 	return c == '|' || c == 'J' || c == 'L';
 }
-
 #ifdef gnu
 [[using gnu : const]]
 #endif
@@ -33,7 +31,6 @@ constexpr bool conn_l(const char c)
 {
 	return c == '-' || c == 'J' || c == '7';
 }
-
 #ifdef gnu
 [[using gnu : const]]
 #endif
