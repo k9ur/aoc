@@ -51,10 +51,7 @@ int main(void)
 
 	while(getline(cin, line)) {
 		dish.grid.push_back(line);
-		if(cols)
-			assert(cols == line.size());
-		else
-			assert(cols = line.size());
+		assert(line.size() == dish.cols());
 	}
 	assert(dish.rows());
 

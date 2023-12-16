@@ -95,14 +95,10 @@ int main(void)
 	constexpr uint32_t cycles = 1'000'000'000;
 	Dish dish{};
 	string line;
-	size_t cols = 0;
 
 	while(getline(cin, line)) {
 		dish.grid.push_back(line);
-		if(cols)
-			assert(cols == line.size());
-		else
-			assert(cols = line.size());
+		assert(line.size() == dish.cols());
 	}
 	assert(dish.rows());
 
