@@ -36,7 +36,7 @@ int main(void)
 	while(getline(iss, inst, ',')) {
 		const auto lens_name = inst.substr(0, inst.size() - (inst.back() == '-' ? 1 : 2));
 		auto& box = boxes[hash_func(lens_name)];
-		const auto iter = find_if(box.begin(), box.end(), [&lens_name](const auto& lens) {
+		const auto iter = ranges::find_if(box, [&lens_name](const auto& lens) {
 			return lens.first == lens_name;
 		});
 

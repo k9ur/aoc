@@ -1,12 +1,9 @@
 #include <iostream>
-#include <ios>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include <limits>
 #include <cstdint>
-#include <cctype>
 
 using namespace std;
 
@@ -19,14 +16,14 @@ int main(void)
 	while(getline(cin, line)) {
 		uint32_t num, points = 1;
 		istringstream iss(line);
-		iss.ignore(numeric_limits<streamsize>::max(), ':');
+		iss.ignore(iss.str().size(), ':');
 		while(iss >> num)
 			needed.push_back(num);
 
 		iss = istringstream(line);
-		iss.ignore(numeric_limits<streamsize>::max(), '|');
+		iss.ignore(iss.str().size(), '|');
 		while(iss >> num)
-			if(find(needed.cbegin(), needed.cend(), num) != needed.cend())
+			if(ranges::find(needed, num) != needed.cend())
 				points <<= 1;
 
 		needed.clear();

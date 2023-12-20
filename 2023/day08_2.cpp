@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <numeric>
 #include <utility>
-#include <limits>
 #include <cassert>
 #include <cstdint>
 
@@ -22,7 +21,7 @@ int main(void)
 		string nodeA, nodeB;
 		istringstream iss(line);
 		iss >> word;
-		iss.ignore(numeric_limits<streamsize>::max(), '(');
+		iss.ignore(iss.str().size(), '(');
 		iss >> nodeA >> nodeB; // with trailing punctuation
 		node_map[word] = { nodeA.substr(0, 3), nodeB.substr(0, 3) };
 	}

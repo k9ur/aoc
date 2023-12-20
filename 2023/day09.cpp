@@ -19,7 +19,7 @@ int main(void)
 		while(iss >> num)
 			seq.push_back(num);
 
-		while(any_of(seq.cbegin(), seq.cend(), identity())) {
+		while(ranges::any_of(seq, identity())) {
 			for(size_t i = 0; i < seq.size() - 1; ++i)
 				seq[i] = seq[i + 1] - seq[i];
 			num_sum += seq.back();

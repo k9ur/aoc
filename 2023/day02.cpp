@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include <array>
-#include <limits>
 #include <cstdint>
 
 using namespace std;
@@ -18,7 +17,7 @@ int main(void)
 		uint32_t count;
 		bool poss = true;
 		istringstream iss(line);
-		iss.ignore(numeric_limits<streamsize>::max(), ':');
+		iss.ignore(iss.str().size(), ':');
 	
 		while(iss >> count >> colour) {
 			const auto first_l = colour[0];

@@ -53,25 +53,20 @@ int main(void)
 {
 	vector<string> grid;
 	string line;
-	size_t cols = 0;
 	uint32_t summary = 0;
 
 	while(getline(cin, line)) {
 		if(line.empty()) {
 			summary += summarise(rows_same<string>, grid, grid.size(), 100);
-			summary += summarise(cols_same<string>, grid, cols);
+			summary += summarise(cols_same<string>, grid, grid.front().size());
 			grid.clear();
-			cols = 0;
 		} else {
 			grid.push_back(line);
-			if(cols)
-				assert(cols == line.size());
-			else
-				assert(cols = line.size());
+			assert(line.size() == grid.front().size());
 		}
 	}
 	summary += summarise(rows_same<string>, grid, grid.size(), 100);
-	summary += summarise(cols_same<string>, grid, cols);
+	summary += summarise(cols_same<string>, grid, grid.front().size());
 
 	cout << summary << '\n';
 	return 0;

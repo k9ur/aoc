@@ -46,7 +46,6 @@ int main(void)
 {
 	Dish dish{};
 	string line;
-	size_t cols = 0;
 	uint32_t load = 0;
 
 	while(getline(cin, line)) {

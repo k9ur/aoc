@@ -41,10 +41,10 @@ int main(void)
 			getline(cin, line);
 		} while(!cin.eof() && !line.empty());
 
-		fill(done_yet.begin(), done_yet.end(), false);
+		ranges::fill(done_yet, false);
 	}
 
-	const auto min_loc = min_element(vals.cbegin(), vals.cend());
+	const auto min_loc = ranges::min_element(vals);
 	assert(min_loc != vals.cend());
 	cout << *min_loc << '\n';
 	return 0;

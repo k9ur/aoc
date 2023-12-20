@@ -79,17 +79,13 @@ int main(void)
 	vector<string> schematic;
 	vector<Star> stars;
 	string line;
-	string::size_type size = 0;
 
 	while(getline(cin, line)) {
 		schematic.push_back(line);
-		if(size) [[likely]]
-			assert(size == line.size());
-		else [[unlikely]]
-			assert(size = line.size());
+		assert(line.size() == schematic.front().size());
 	}
 
-	const auto cols = size,
+	const auto cols = schematic.front().size(),
 	           rows = schematic.size();
 
 	size_t col, row;
@@ -101,7 +97,7 @@ int main(void)
 	for(row = 0; const string_view sv : schematic) {
 		for(col = 0; col < cols; ++col)
 			if(isdigit(sv[col])) {
-				string::size_type start_col = col;
+				auto start_col = col;
 				do
 					++col;
 				while(col < cols && isdigit(sv[col]));

@@ -21,7 +21,7 @@ int main(void)
 
 		num_sum += seq.front();
 		bool add = false;
-		while(any_of(seq.cbegin(), seq.cend(), identity())) {
+		while(ranges::any_of(seq, identity())) {
 			for(size_t i = 0; i < seq.size() - 1; ++i)
 				seq[i] = seq[i + 1] - seq[i];
 			if(add)

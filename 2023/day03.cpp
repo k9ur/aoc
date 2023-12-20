@@ -61,24 +61,20 @@ int main(void)
 {
 	vector<string> schematic;
 	string line;
-	string::size_type size = 0;
 	uint32_t part_sum = 0;
 
 	while(getline(cin, line)) {
 		schematic.push_back(line);
-		if(size) [[likely]]
-			assert(size == line.size());
-		else [[unlikely]]
-			assert(size = line.size());
+		assert(line.size() == schematic.front().size());
 	}
 
 	for(size_t col, row = 0; const string_view sv : schematic) {
-		for(col = 0; col < size; ++col)
+		for(col = 0; col < schematic.front().size(); ++col)
 			if(isdigit(sv[col])) {
-				string::size_type start_col = col;
+				auto start_col = col;
 				do
 					++col;
-				while(col < size && isdigit(sv[col]));
+				while(col < schematic.front().size() && isdigit(sv[col]));
 				if(symbol_in_surroundings(schematic, row, start_col, col))
 					part_sum += svto<uint32_t>(sv.substr(start_col, col - start_col));
 			}

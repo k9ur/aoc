@@ -1,15 +1,12 @@
 #include <iostream>
-#include <ios>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <algorithm>
 #include <numeric>
 #include <iterator>
-#include <limits>
 #include <execution>
 #include <cstdint>
-#include <cctype>
 
 using namespace std;
 
@@ -23,14 +20,14 @@ int main(void)
 		size_t matches = 0;
 		uint32_t num;
 		istringstream iss(line);
-		iss.ignore(numeric_limits<streamsize>::max(), ':');
+		iss.ignore(iss.str().size(), ':');
 		while(iss >> num)
 			needed.push_back(num);
 
 		iss = istringstream(line);
-		iss.ignore(numeric_limits<streamsize>::max(), '|');
+		iss.ignore(iss.str().size(), '|');
 		while(iss >> num)
-			if(find(needed.cbegin(), needed.cend(), num) != needed.cend())
+			if(ranges::find(needed, num) != needed.cend())
 				++matches;
 
 		if(c_i >= count.size())

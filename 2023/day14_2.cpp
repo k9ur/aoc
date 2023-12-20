@@ -112,8 +112,8 @@ int main(void)
 		dish.cycle_WE<false>();
 
 		const pair load_pair = { dish.calc_load_NS<true>(), dish.calc_load_WE<true>() };
-		if(find(loads.cbegin(), loads.cend(), load_pair) != loads.cend()) {
-			const auto iter = find_if(grid_cache.cbegin(), grid_cache.cend(), [&dish](const auto& cache) {
+		if(ranges::find(loads, load_pair) != loads.cend()) {
+			const auto iter = ranges::find_if(grid_cache, [&dish](const auto& cache) {
 				return cache.first == dish.grid;
 			});
 			if(iter != grid_cache.cend()) {
