@@ -50,7 +50,7 @@ int main(void)
 			if(iter == box.end())
 				box.emplace_back(lens_name, focal_len);
 			else
-				(*iter).second = focal_len;
+				iter->second = focal_len;
 		}
 	}
 

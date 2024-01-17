@@ -117,7 +117,7 @@ int main(void)
 				return cache.first == dish.grid;
 			});
 			if(iter != grid_cache.cend()) {
-				const uint32_t loop_begin = (*iter).second,
+				const uint32_t loop_begin = iter->second,
 				               loop_len = loads.size() - loop_begin;
 				cycle_i = loop_begin + ((cycles - 1 - loop_begin) % loop_len) + 1;
 				break;
