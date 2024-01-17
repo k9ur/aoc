@@ -38,3 +38,6 @@
 # Misc
 *.bat
 *.sh
+
+# Incomplete solutions
+*_incomplete.*
