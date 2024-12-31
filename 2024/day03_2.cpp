@@ -26,7 +26,7 @@ int main(void)
 		} else if (ins == 1) {
 			if (count && ((st == 4 && c == ',') || (st == 5 && c == ')'))) {
 				count = 0;
-				if (++st==6) {
+				if (++st == 6) {
 					st = ins = 0;
 					mul_sum += X * Y;
 				}

@@ -1,9 +1,22 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
+#include <cassert>
 #include <cstdint>
 
 using namespace std;
+
+struct WordSearch : vector<string>
+{
+	constexpr size_t rows(void) const noexcept
+	{
+		return size();
+	}
+	constexpr size_t cols(void) const noexcept
+	{
+		return front().size();
+	}
+};
 
 bool is_xmas(const char a, const char b, const char c, const char d)
 {
@@ -15,23 +28,25 @@ bool is_xmas(const char a, const char b, const char c, const char d)
 
 int main(void)
 {
-	vector<string> ws;
-	string s;
-	size_t rows, cols;
-	uint32_t r, c, count{};
+	WordSearch ws{};
+	uint32_t count = 0;
 
-	while (getline(cin, s))
-		ws.push_back(s);
-	rows = ws.size();
-	cols = ws.front().size();
-	if (rows < 3 || cols < 3)
-		return 0;
+	{
+		string s;
+		while (getline(cin, s)) {
+			ws.push_back(s);
+			assert(s.size() == ws.front().size());
+		}
+	}
+	if (ws.rows() < 3 || ws.cols() < 3)
+		goto done;
 
-	for (r = 1; r != rows - 1; ++r)
-		for (c = 1; c != cols - 1; ++c)
+	for (size_t c, r = 1; r != ws.rows() - 1; ++r)
+		for (c = 1; c != ws.cols() - 1; ++c)
 			if (ws[r][c] == 'A' && is_xmas(ws[r - 1][c - 1], ws[r - 1][c + 1], ws[r + 1][c - 1], ws[r + 1][c + 1]))
 				++count;
 
+done:
 	cout << count << '\n';
 	return 0;
 }

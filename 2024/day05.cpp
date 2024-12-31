@@ -27,12 +27,13 @@ int main(void)
 	vector<uint32_t> pages;
 	string s;
 	istringstream iss;
-	uint32_t X, Y, page, mid_sum{};
-	bool valid;
+	uint32_t mid_sum = 0;
 
 	while (getline(cin, s)) {
 		if (s.empty())
 			break;
+		uint32_t X, Y;
+
 		iss.str(s);
 		iss >> X;
 		iss.ignore(1);
@@ -43,7 +44,9 @@ int main(void)
 	}
 
 	while (getline(cin, s)) {
-		valid = true;
+		uint32_t page;
+		bool valid = true;
+
 		iss.str(s);
 		while (iss >> page) {
 			if (is_overlap(rules[page], pages)) {

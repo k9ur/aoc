@@ -34,31 +34,31 @@ bool is_safe(istringstream& iss, uint32_t prev, bool used_c)
 int main(void)
 {
 	string s;
-	istringstream iss;
-	uint32_t prev, trash, safe_count{};
+	uint32_t safe_count = 0;
 
 	while (getline(cin, s)) {
-		iss.str(s);
+		istringstream iss(s);
+		uint32_t prev, trash;
+
 		iss >> prev;
 		if (is_safe(iss, prev, false)) {
 			++safe_count;
-			goto clear;
+			continue;
 		}
 		iss.clear();
 		iss.str(s);
 		iss >> trash >> prev;
 		if (is_safe(iss, prev, true)) {
 			++safe_count;
-			goto clear;
+			continue;
 		}
 		iss.clear();
 		iss.str(s);
 		iss >> prev >> trash;
 		if (is_safe(iss, prev, true))
 			++safe_count;
-clear:
-		iss.clear();
 	}
+
 	cout << safe_count << '\n';
 	return 0;
 }
